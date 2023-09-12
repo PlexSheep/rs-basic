@@ -2,7 +2,13 @@
 name = "c-bindings"
 version = "0.1.0"
 edition = "2021"
+links = "test" 		# this is the important part! cargo will search for some library called `test` (i.e. libtest.a)
+build = "src/build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+cty = "0.2.2"
+
+[build-dependencies]
+cc = "1.0.83"

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 project(test VERSION 1.0.1 DESCRIPTION "test lib")
 include(GNUInstallDirs)
-add_library(test SHARED test.c)
+add_library(test STATIC test.c)
 set_target_properties(test PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
