@@ -1,8 +1,19 @@
+[workspace]
+publish = false
+members = [
+	".",
+	"members/c-bindings"
+]
+default-members = [
+	".",
+	"members/c-bindings"
+]
+
 [package]
 name = "rs-basic"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+authors = ["Christoph J. Scherr <softwar@cscherr.de>"]
+publish = false
+autobins = true
+default-run = "rs-basic"
