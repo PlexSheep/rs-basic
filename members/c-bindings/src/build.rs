@@ -1,4 +1,3 @@
-/// 
 /// we could simply do this to compile the test lib to a static lib,
 /// but that solution might not scale as good as calling a professional
 /// build system

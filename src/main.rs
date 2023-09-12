@@ -1,6 +1,7 @@
 fn main() {
     println!(
-"This is the default executable! It does not do much, use another executable.
+"SUCCESS!!!
+This is the default executable! It does not do much, use another executable.
 
 Select your target like this:
 `cargo run --bin $TARGET`

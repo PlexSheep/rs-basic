@@ -9,9 +9,16 @@ int ret19() {
 
 char* structInfo(MyStruct *st) {
 		char* buf = malloc(1024*sizeof(char));
-		/* snprintf(buf, sizeof(buf), "foo: %d\n", st->foo); */
-		/* snprintf(buf, sizeof(buf), "bar: %c", st->bar); */
-		sprintf(buf,"Infos about the struct:\nfoo:\t%d\nbar:\t%c\n\ngreetings from C", st->foo, st->bar);
+		sprintf(buf,
+				"Infos about the struct:\n"
+				"\tfoo:\t%d\n"
+				"\tbar:\t%c\n"
+				"\n"
+				"greetings from C"
+				,
+				st->foo,
+				st->bar
+		);
 
 		return buf;
 }
