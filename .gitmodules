@@ -1,0 +1,3 @@
+[submodule "rs-unsafe"]
+	path = rs-unsafe
+	url = https://git.cscherr.de/PlexSheep/rs-unsafe.git
