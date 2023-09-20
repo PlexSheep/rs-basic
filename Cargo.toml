@@ -2,11 +2,9 @@
 publish = false
 members = [
 	".",
-	"members/c-bindings"
 ]
 default-members = [
 	".",
-	"members/c-bindings"
 ]
 
 [package]
