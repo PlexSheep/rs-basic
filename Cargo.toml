@@ -2,14 +2,16 @@
 publish = false
 members = [
 	".",
+	"members/bench-criterion",
 ]
 default-members = [
 	".",
+	"members/bench-criterion",
 ]
 
 [package]
 name = "rs-basic"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Christoph J. Scherr <softwar@cscherr.de>"]
 publish = false
