@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   format:
-    name: cargo test
+    name: cargo fmt
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
@@ -19,7 +19,7 @@ jobs:
           # Defaults to "Apply automatic changes"
           commit_message: Automatical formatting
   check:
-    name: cargo test
+    name: cargo check
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
