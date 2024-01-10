@@ -1,12 +1,12 @@
 [workspace]
 publish = false
 members = [
-	".",
-	"members/bench-criterion",
+	".", "members/criterion_ex",
+	"members/revsqrt",
 ]
 default-members = [
 	".",
-	"members/bench-criterion",
+	"members/revsqrt",
 ]
 
 [package]
