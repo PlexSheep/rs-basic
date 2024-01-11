@@ -1,12 +1,12 @@
 #![allow(unused)]
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use revsqrt::{fast_inverse_sqrt, inverse_sqrt};
+use revsqrt::{fast_inverse_sqrt, regular_inverse_sqrt};
 const SIZE: f32 = 1337.1337;
 const FCONST: f32 = 1024.12481224;
 const FCONST1: f32 = 4025.724812234;
 pub fn single_input(c: &mut Criterion) {
     c.bench_with_input(BenchmarkId::new("regular rsqrt", SIZE), &SIZE, |b, &s| {
-        b.iter(|| inverse_sqrt(s))
+        b.iter(|| regular_inverse_sqrt(s))
     });
     c.bench_with_input(BenchmarkId::new("fast rsqrt", SIZE), &SIZE, |b, &s| {
         b.iter(|| fast_inverse_sqrt(s))
@@ -29,7 +29,7 @@ pub fn multi_input(c: &mut Criterion) {
             BenchmarkId::new("regular rsqrt mixed input", FCONST),
             size,
             |b, &size| {
-                b.iter(|| inverse_sqrt(size));
+                b.iter(|| regular_inverse_sqrt(size));
             },
         );
     }
