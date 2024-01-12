@@ -20,4 +20,7 @@ jobs:
         with:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
-          commit_message: cargo CI
+          commit_message: automatic cargo CI changes
+          commit_user_name: Gitea CI
+          commit_user_email: noreply@cscherr.de
+          commit_author: Gitea CI <noreply@cscherr.de>
