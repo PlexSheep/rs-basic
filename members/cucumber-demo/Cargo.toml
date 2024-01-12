@@ -9,6 +9,7 @@ edition = "2021"
 futures = "0.3.30"
 cucumber = "0.20.2"
 tokio = { version = "1.10", features = ["macros", "rt-multi-thread", "time"] }
+rand = "0.8.5"
 
 [[test]]
 name = "example" # this should be the same as the filename of your test target
