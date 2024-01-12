@@ -3,6 +3,7 @@ members = [
   ".",
   "members/criterion-demo",
   "members/cucumber-demo",
+  "members/panic-calm",
   "members/revsqrt",
   "members/serde-json-demo",
   "members/slog-demo",
@@ -14,6 +15,7 @@ default-members = [
   "members/serde-json-demo",
   "members/slog-demo",
   "members/cucumber-demo",
+  "members/panic-calm",
 ]
 
 [package]
