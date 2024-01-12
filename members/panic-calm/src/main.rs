@@ -1,11 +1,13 @@
-use std::{io::Write, panic};
+use std::panic;
 fn inner() {
     let mut counter = 0u8;
     loop {
         // will eventually panic when overflowing?
         counter += 1;
         print!("{counter}\t");
-        if counter % 8 == 0 { println!() }
+        if counter % 8 == 0 {
+            println!()
+        }
         if counter == 255 {
             // so panic will look fancier :)
             println!()
@@ -22,6 +24,7 @@ fn main() {
         dbg!(&panic);
         dbg!(&panic.as_ref().unwrap_err().type_id());
         println!("recovered from a panic");
+    } else {
+        println!("no panic on the titanic")
     }
-    else {println!("no panic on the titanic")}
 }
