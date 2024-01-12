@@ -13,8 +13,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo check --all-features --all-targets
       - run: rustup component add rustfmt
-      - run: cargo fmt --all
       - run: cargo fix --all-features --all-targets
+      - run: cargo fmt --all
       - run: cargo test --all-features --all-targets
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
