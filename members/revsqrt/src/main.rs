@@ -25,11 +25,13 @@ fn main() {
     let fr = fast_inverse_sqrt(n);
     let fdur = start.elapsed();
 
-    println!("regular\tinverse square root of {n}: {rr}\t(took {rdur:?})\n\
+    println!(
+        "regular\tinverse square root of {n}: {rr}\t(took {rdur:?})\n\
     fast   \tinverse square root of {n}: {fr}\t(took {fdur:?})\n\n\
     The timings are not accurate. Benchmarks show ~170 ps for each.\n\
     The CPU has a instruction for sqrt, and 1/x is simple division, so\n\
-    an algorithm like fast inverse square root can hardly be faster.");
+    an algorithm like fast inverse square root can hardly be faster."
+    );
 }
 
 fn usage(invocation: &str) {
