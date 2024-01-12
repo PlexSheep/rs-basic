@@ -2,47 +2,22 @@ name: Cargo Check, Format, Fix and Test
 on: [push, pull_request]
 
 jobs:
-  check:
-    name: cargo check
+  format:
+    name: cargo CI
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo check --all-features --all-targets
-  format:
-    name: cargo fmt
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
       - run: rustup component add rustfmt
       - run: cargo fmt --all
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          # Optional. Commit message for the created commit.
-          # Defaults to "Apply automatic changes"
-          commit_message: CI cargo fmt
-  fix:
-    name: cargo fix
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - run: rustup component add rustfmt
       - run: cargo fix --all-features --all-targets
+      - run: cargo test --all-features --all-targets
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
-          commit_message: CI cargo fix
-  test:
-    name: cargo test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test --all-features --all-targets
+          commit_message: cargo CI
