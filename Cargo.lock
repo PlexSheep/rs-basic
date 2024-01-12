@@ -177,6 +177,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "criterion-demo"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+]
+
+[[package]]
 name = "criterion-plot"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -184,13 +191,6 @@ checksum = "6b50826342786a51a89e2da3a28f1c32b06e387201bc2d19791f622c673706b1"
 dependencies = [
  "cast",
  "itertools",
-]
-
-[[package]]
-name = "criterion_ex"
-version = "0.1.0"
-dependencies = [
- "criterion",
 ]
 
 [[package]]
@@ -217,6 +217,10 @@ name = "crossbeam-utils"
 version = "0.8.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "248e3bacc7dc6baa3b21e405ee045c3047101a49145e7e9eca583ab4c2ca5345"
+
+[[package]]
+name = "cucumber-demo"
+version = "0.1.0"
 
 [[package]]
 name = "either"

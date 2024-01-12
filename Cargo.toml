@@ -1,17 +1,19 @@
 [workspace]
 members = [
-	".",
-	"members/criterion_ex",
-	"members/revsqrt",
-	"members/serde-json-demo",
-	"members/slog-demo",
+  ".",
+  "members/criterion-demo",
+  "members/cucumber-demo",
+  "members/revsqrt",
+  "members/serde-json-demo",
+  "members/slog-demo",
 ]
 default-members = [
-	".",
-	"members/criterion_ex",
-	"members/revsqrt",
-	"members/serde-json-demo",
-	"members/slog-demo",
+  ".",
+  "members/criterion-demo",
+  "members/revsqrt",
+  "members/serde-json-demo",
+  "members/slog-demo",
+  "members/cucumber-demo",
 ]
 
 [package]
