@@ -1,12 +1,17 @@
 [workspace]
-publish = false
 members = [
-	".", "members/criterion_ex",
+	".",
+	"members/criterion_ex",
 	"members/revsqrt",
+	"members/serde-json-demo",
+	"members/slog-demo",
 ]
 default-members = [
 	".",
+	"members/criterion_ex",
 	"members/revsqrt",
+	"members/serde-json-demo",
+	"members/slog-demo",
 ]
 
 [package]

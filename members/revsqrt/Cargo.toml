@@ -9,3 +9,11 @@ criterion = "0.5.1"
 [[bench]]
 name = "rsqrt-bench"
 harness = false 	# disable standard harness
+
+[lib]
+name = "revsqrt"
+path = "src/lib.rs"
+
+[[bin]]
+name = "revsqrt"
+path = "src/main.rs"
