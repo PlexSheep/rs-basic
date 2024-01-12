@@ -25,7 +25,7 @@ jobs:
           # Defaults to "Apply automatic changes"
           commit_message: CI cargo fmt
   fix:
-    name: cargo fmt
+    name: cargo fix
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
