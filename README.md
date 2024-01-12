@@ -1,9 +1,11 @@
 # Rust basics
 
-This repository aims to contain basics for the rust language.
+This project contains various smaller rust projects, often made by myself to
+gain more understanding with a topic or dependency.
 
-## Structure
+## Rust unsafe
 
-- [`modules`] contains complete small `cargo` projects
-- [`src/bin`] contains binaries that are too small to justify a complete
-    directory.
+Unsafe rust offers many possibilities otherwise locked from rust, which might
+cause undefined behavior (or are dubbed unsafe for other reasons). Let's be
+honest, they are hacks. But they can have fun uses and are sometimes interesting
+to explore, if only to see how the underlying system works.
