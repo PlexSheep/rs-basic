@@ -36,8 +36,8 @@ impl AnimalWorld {
 #[given(regex = r"^a (hungry|satiated) cat$")]
 async fn hungry_cat(world: &mut AnimalWorld, state: String) {
     match state.as_str() {
-        "hungry" =>  world.cat.hungry = true,
-        "satiated" =>  world.cat.hungry = false,
+        "hungry" => world.cat.hungry = true,
+        "satiated" => world.cat.hungry = false,
         _ => unreachable!(),
     }
 }

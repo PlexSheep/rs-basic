@@ -1,5 +1,3 @@
-use revsqrt::*;
-
 use cucumber::{given, then, when, World};
 use rand;
 
@@ -11,7 +9,7 @@ pub struct NumWorld {
 
 // is n about the same as m?
 fn about_same(n: f32, m: f32) -> bool {
-    (n - m)*1000f32 < 1f32
+    (n - m) * 1000f32 < 1f32
 }
 
 // Steps are defined with `given`, `when` and `then` attributes.
