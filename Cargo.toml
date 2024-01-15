@@ -7,6 +7,7 @@ members = [
   "members/revsqrt",
   "members/serde-json-demo",
   "members/slog-demo",
+  "members/socker",
 ]
 default-members = [
   ".",
@@ -16,6 +17,7 @@ default-members = [
   "members/slog-demo",
   "members/cucumber-demo",
   "members/panic-calm",
+  "members/socker",
 ]
 
 [package]
