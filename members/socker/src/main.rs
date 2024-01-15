@@ -7,7 +7,6 @@ use std::{
 mod pool;
 use pool::ThreadPool;
 
-
 fn main() {
     println!("Starting the server");
     let target_address = "127.0.0.1:7878";
