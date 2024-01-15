@@ -109,7 +109,9 @@ async fn they_are_about_the_same(world: &mut NumWorld) {
         assert!(
             still_same,
             "{} and {} are not about the same! (gate: {})",
-            tup.0, last_num, calc_gate(tup.0, last_num)
+            tup.0,
+            last_num,
+            calc_gate(tup.0, last_num)
         );
         last_num = tup.0;
     }
@@ -124,7 +126,9 @@ async fn they_are_not_about_the_same(world: &mut NumWorld) {
         assert!(
             !found_a_same,
             "{} and {} are about the same! (gate: {})",
-            tup.0, last_num, calc_gate(tup.0, last_num)
+            tup.0,
+            last_num,
+            calc_gate(tup.0, last_num)
         );
         last_num = tup.0;
     }
