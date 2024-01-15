@@ -1,12 +1,17 @@
 use std::{
-    io::{BufRead, BufReader, Write},
+    io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
     process::exit,
 };
 
+mod pool;
+use pool::ThreadPool;
+
+
 fn main() {
     println!("Starting the server");
     let target_address = "127.0.0.1:7878";
+    let pool = ThreadPool::build(4).unwrap();
     let listener = match TcpListener::bind(target_address) {
         Ok(listener) => listener,
         Err(err) => {
@@ -17,7 +22,9 @@ fn main() {
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
-        handle_connection(stream);
+        pool.execute(|| {
+            handle_connection(stream);
+        });
     }
 }
 
