@@ -62,7 +62,10 @@ Feature: inverted square root calculation
     Given the number n
       | n            |
       | 1            |
+      | 0.9          |
       | 1.0001       |
+      | 1.1001       |
+      | 1.1050       |
       | 0.999        |
       | 0.9999999999 |
     Then they are about the same

@@ -14,10 +14,10 @@ pub struct NumWorld {
 // a thought of me at least?
 #[inline]
 fn about_same(n: f32, m: f32) -> bool {
-    dbg!((n, m));
-    dbg!((n - m).abs());
-    dbg!(calc_gate(n, m));
-    dbg!((n - m).abs() < calc_gate(n, m));
+    // dbg!((n, m));
+    // dbg!((n - m).abs());
+    // dbg!(calc_gate(n, m));
+    // dbg!((n - m).abs() < calc_gate(n, m));
     (n - m).abs() <= calc_gate(n, m)
 }
 
