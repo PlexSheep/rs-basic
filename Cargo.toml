@@ -4,6 +4,7 @@ members = [
   "members/criterion-demo",
   "members/cucumber-demo",
   "members/panic-calm",
+  "members/pest-demo",
   "members/revsqrt",
   "members/serde-json-demo",
   "members/slog-demo",
@@ -11,8 +12,9 @@ members = [
 ]
 default-members = [
   ".",
-  "members/criterion-demo",
   "members/revsqrt",
+  "members/criterion-demo",
+  "members/pest-demo",
   "members/serde-json-demo",
   "members/slog-demo",
   "members/cucumber-demo",
