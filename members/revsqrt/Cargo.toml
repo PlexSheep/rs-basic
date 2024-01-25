@@ -25,3 +25,7 @@ path = "src/main.rs"
 [[test]]
 name = "revsqrt"
 harness = false  # allows Cucumber to print output instead of libtest
+
+[[test]]
+name = "basic-revsqrt"
+harness = true

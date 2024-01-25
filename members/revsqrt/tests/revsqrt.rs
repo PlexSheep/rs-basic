@@ -1,23 +1,22 @@
 use std::iter::zip;
 
+use revsqrt;
+
 use cucumber::{gherkin::Step, given, then, when, World};
 use rand;
 
+/// stores the current information for each scenario
 #[derive(Debug, Default, World)]
-pub struct NumWorld {
+struct NumWorld {
     numbers: Vec<(f32, f32)>,
 }
 
-// is n about the same as m?
-// This is actually not so easy! How do you measure "about same"ness?
-// Also, it is not transitive, as 1 ≈ 1.1 ≈ 1.2 ≈ 1.3 ≈ ... ≈ 2 ≈ ... ≈ 3 ≈ ... ≈ infinity, that's
-// a thought of me at least?
+/// is n about the same as m?
+///
+/// This is actually not so easy! How do you measure *about same*ness?
+/// Also, I don't think it is transitive, as 1 ≈ 1.1 ≈ 1.2 ≈ 1.3 ≈ ... ≈ 2 ≈ ... ≈ 3 ≈ ... ≈ infinity
 #[inline]
 fn about_same(n: f32, m: f32) -> bool {
-    // dbg!((n, m));
-    // dbg!((n - m).abs());
-    // dbg!(calc_gate(n, m));
-    // dbg!((n - m).abs() < calc_gate(n, m));
     (n - m).abs() <= calc_gate(n, m)
 }
 
