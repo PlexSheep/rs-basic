@@ -65,6 +65,7 @@ fn test_calc_specific_reqular_rsqrt() {
 }
 
 #[test]
+#[ignore] // this test confuses the CI
 fn test_fail() {
     println!("the stdout will be printed on fail!");
     assert!(false)

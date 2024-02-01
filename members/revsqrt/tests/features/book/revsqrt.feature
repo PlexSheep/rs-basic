@@ -123,9 +123,12 @@ Feature: inverted square root calculation
       | 0               |
       | 20000001.1      |
     Then they are not about the same
-  
+
   Scenario: Test if we can use the asterisk
     Given a number
     * a number
+    * a number
+    * a number
+    * a number
     When we calculate the inverted square root of it normally
-    Then they are not about the same
+    Then the result can be calculated
