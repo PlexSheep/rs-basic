@@ -53,7 +53,7 @@ async fn main() {
     }
 
     let start = Instant::now();
-    let separate: usize = 1 as usize;
+    let separate: usize = ((M / (1 << 11 + EXP)) + 1) as usize;
     let (sender, recv) = std::sync::mpsc::channel();
     rayon::spawn(move || {
         for i in 0..separate + 1 {
