@@ -33,19 +33,6 @@ async fn main() {
     println!("starting the threads");
     let mut interval = interval(tokio::time::Duration::from_millis(100));
     loop {
-        match future::select(do_work(), interval.tick()).await {
-            Either::Left((result, _)) => {
-                // Our worker completed successfully!
-                result?;
-
-                // Do any additional processing here after successful completion
-             },
-
-            Either::Right(_) => {
-               // The interval has fired - we don't have to wait for the worker anymore
-               println!("Interval triggered!");
-           }
-       };
         tokio::select! {
         _ = interval.tick() => {
         println!("The number: {THE_NUMBER:?}");
