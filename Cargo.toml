@@ -9,6 +9,7 @@ members = [
   "members/serde-json-demo",
   "members/slog-demo",
   "members/socker",
+  "members/tokryon",
 ]
 default-members = [
   ".",
@@ -20,11 +21,12 @@ default-members = [
   "members/cucumber-demo",
   "members/panic-calm",
   "members/socker",
+  "members/tokryon",
 ]
 
 [package]
 name = "rs-basic"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["Christoph J. Scherr <softwar@cscherr.de>"]
 publish = false
