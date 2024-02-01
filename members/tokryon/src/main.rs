@@ -1,3 +1,4 @@
+use std::io::prelude::*;
 use std::sync::{Arc, Mutex};
 
 use rayon::prelude::*;
@@ -5,7 +6,7 @@ use tokio::time::{interval, Instant};
 
 // if we make these larger, our computer can be used as a heater🔥
 type Danum = u16;
-const CAP: usize = 1 << 14;
+const CAP: usize = 1 << 16;
 const M: u128 = CAP as u128 * Danum::MAX as u128;
 
 fn status(start: &Instant, range: &Vec<Danum>) -> bool {
@@ -24,6 +25,7 @@ fn status(start: &Instant, range: &Vec<Danum>) -> bool {
     log_2(sum):         {}
     cap:                {}
     sum:                {}
+    M:                  {}
     took:               {:?}
     "#,
         eq,
@@ -33,6 +35,7 @@ fn status(start: &Instant, range: &Vec<Danum>) -> bool {
         sum.ilog2(),
         CAP,
         sum,
+        M,
         start.elapsed(),
     );
     eq
@@ -51,11 +54,15 @@ async fn main() {
     let lock = Arc::new(Mutex::new(range));
     let lock2 = lock.clone();
     rayon::spawn(move || {
-        for n in 0..CAP {
+        const FOOF: usize = 16;
+        for i in 0..FOOF {
             let mut range = lock.lock().unwrap();
-            for _ in 0..Danum::MAX {
-                range[n] += 1;
-            }
+            range.par_iter_mut().skip(i).step_by(FOOF).for_each(|num| {
+                for _ in 0..Danum::MAX {
+                    *num += 1;
+                    let _ = write!(std::io::Sink::default(), "{num}");
+                }
+            });
         }
     });
     let mut ticker = interval(tokio::time::Duration::from_millis(500));
