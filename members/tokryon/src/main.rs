@@ -1,43 +1,35 @@
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::io::{prelude::*, Sink};
 
 use rayon::prelude::*;
-use tokio::{
-    self,
-    time::{interval, Interval},
-};
 
-static THE_NUMBER: AtomicU32 = AtomicU32::new(0);
-
-#[inline]
-fn incr() {
-    // just add it
-    THE_NUMBER.store(THE_NUMBER.load(Ordering::Relaxed) + 1, Ordering::Relaxed)
-}
-
-#[inline]
-fn get() -> u32 {
-    THE_NUMBER.load(Ordering::Relaxed)
-}
-#[inline]
-async fn more() {
-    rayon::spawn(|| incr())
-}
+// if we make these larger, our computer can be used as a heater🔥
+type Danum = u16;
+const CAP: usize = 1 << 14;
 
 #[tokio::main]
 async fn main() {
-    // Lets say that we want to add numbers FAST
-    println!("The number: {THE_NUMBER:?}");
-    incr();
-    assert_eq!(get(), 1);
-    println!("The number: {THE_NUMBER:?}");
-    println!("starting the threads");
-    let mut interval = interval(tokio::time::Duration::from_millis(100));
-    loop {
-        tokio::select! {
-        _ = interval.tick() => {
-        println!("The number: {THE_NUMBER:?}");
-            }
-        _ = more() => ()
-        };
+    // Lets say that we want to add many numbers FAST
+    let mut range: Vec<Danum> = Vec::with_capacity(CAP);
+    // Initialize the values, probably zero
+    unsafe {
+        range.set_len(range.capacity());
     }
+    let now = std::time::Instant::now();
+    range.par_iter_mut().for_each(|num| {
+        let mut sink = Sink::default();
+        while *num < Danum::MAX {
+            *num += 1; // cannot use `+=` on type `&u8`
+            let _ = write!(sink, "{num}"); // just to disable the compiler from calculating it all
+                                           // beforehand
+        }
+    });
+    let sum: u128 = { range.par_iter().map(|n| *n as u128).sum::<u128>() };
+    let eq = sum == CAP as u128 * Danum::MAX as u128;
+    println!(
+        "log cap: {}\nit worked: {eq}\nsum: {sum}\nlog_2(sum): {}\ntook: {:?}\nused threads: {}",
+        CAP.ilog2(),
+        sum.ilog2(),
+        now.elapsed(),
+        rayon::current_num_threads()
+    );
 }
