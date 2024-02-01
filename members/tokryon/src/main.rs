@@ -3,8 +3,8 @@ use std::io::prelude::*;
 use tokio::time::Instant;
 
 // if we make these larger, our computer can be used as a heater🔥
-type Danum = u16;
-const EXP: usize = 12; // FIXME: If this goes lower than 7, somehow the mpsc breaks?
+type Danum = u16; // you wont see any statuses for a long time with anything bigger than u16
+const EXP: usize = 8; // FIXME: If this goes lower than 7, somehow the mpsc breaks?
 const CAP: usize = 1 << EXP;
 const M: u128 = CAP as u128 * Danum::MAX as u128;
 
@@ -57,14 +57,7 @@ async fn main() {
     // stops earlier sometimes
     let (sender, recv) = std::sync::mpsc::channel();
     rayon::spawn(move || {
-        for i in 0..separate + 1 {
-            match sender.send((range.par_iter().map(|n| *n as u128).sum(), i)) {
-                Ok(_) => (),
-                Err(err) => {
-                    eprintln!("{err}");
-                    break;
-                }
-            }
+        for i in 0..separate {
             range
                 .par_iter_mut()
                 .skip(i)
@@ -75,8 +68,14 @@ async fn main() {
                         let _ = write!(std::io::Sink::default(), "{num}");
                     }
                 });
+            match sender.send((range.par_iter().map(|n| *n as u128).sum(), i + 1)) {
+                Ok(_) => (),
+                Err(err) => {
+                    eprintln!("{err}");
+                    break;
+                }
+            }
         }
-        println!("DONE!");
     });
     loop {
         match recv.recv() {
