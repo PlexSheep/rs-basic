@@ -1,7 +1,7 @@
+use anyhow;
 use chrono;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use anyhow;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "UPPERCASE")]
