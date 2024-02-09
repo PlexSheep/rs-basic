@@ -1,5 +1,9 @@
-name: Cargo Check, Format, Fix and Test
-on: [push, pull_request]
+name: cargo devel CI
+on:
+  push:
+    branches:
+      - '**'
+      # - '!master'
 
 jobs:
   format:
@@ -9,18 +13,32 @@ jobs:
       # added or changed files to the repository.
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - run: cargo check --all-features --all-targets
-      - run: rustup component add rustfmt
-      - run: cargo fix --all-features --all-targets
-      - run: cargo fmt --all
-      - run: cargo test --all-features --all-targets
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: get repo
+        uses: actions/checkout@v4
+      - name: install rust
+        uses: https://github.com/dtolnay/rust-toolchain@stable
+      - name: install additional rust things
+        run: rustup component add rustfmt
+      - name: config custom registry
+        run: |
+          mkdir -p ~/.cargo/
+          echo "" > ~/.cargo/config.toml
+          echo "[registry]" >> ~/.cargo/config.toml
+          echo 'cscherr = "cscherr"' >> ~/.cargo/config.toml
+          echo '[registries.cscherr]' >> ~/.cargo/config.toml
+          echo 'index = "https://git.cscherr.de/PlexSheep/_cargo-index.git"' >> ~/.cargo/config.toml
+          cat ~/.cargo/config.toml
+      - name: cargo check
+        run: cargo check --all-features --all-targets
+      - name: cargo fix
+        run: cargo fix --all-features --all-targets
+      - name: cargo fmt
+        run: cargo fmt --all
+      - name: cargo test
+        run: cargo test --all-features --all-targets
+      - name: commit back to repository
+        uses: https://github.com/stefanzweifel/git-auto-commit-action@v5
         with:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
           commit_message: automatic cargo CI changes
-          commit_user_name: Gitea CI
-          commit_user_email: noreply@cscherr.de
-          commit_author: Gitea CI <noreply@cscherr.de>
