@@ -7,14 +7,18 @@ members = [
   "members/pest-demo",
   "members/revsqrt",
   "members/serde-json-demo",
+  "members/shortc",
   "members/slog-demo",
   "members/socker",
   "members/tokryon",
+  "members/tokio-send-sync",
+  "members/matchmatchmatch",
 ]
 default-members = [
   ".",
   "members/revsqrt",
   "members/criterion-demo",
+  "members/shortc",
   "members/pest-demo",
   "members/serde-json-demo",
   "members/slog-demo",
@@ -22,7 +26,22 @@ default-members = [
   "members/panic-calm",
   "members/socker",
   "members/tokryon",
+  "members/tokio-send-sync",
+  "members/matchmatchmatch",
 ]
+
+[workspace.dependencies]
+anyhow = "1.0.79"
+thiserror = "1.0.56"
+tokio = { version = "1.35.1", features = [
+  "net",
+  "rt",
+  "macros",
+  "rt-multi-thread",
+  "io-util",
+  "time",
+  "sync",
+] }
 
 [package]
 name = "rs-basic"
