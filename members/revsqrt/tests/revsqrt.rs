@@ -1,9 +1,6 @@
 use std::iter::zip;
 
-
-
 use cucumber::{gherkin::Step, given, then, when, World};
-
 
 /// stores the current information for each scenario
 #[derive(Debug, Default, World)]

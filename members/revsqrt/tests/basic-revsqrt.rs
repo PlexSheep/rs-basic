@@ -1,9 +1,5 @@
 use std::iter::zip;
 
-
-
-
-
 // is n about the same as m?
 // This is actually not so easy! How do you measure "about same"ness?
 // Also, it is not transitive, as 1 ≈ 1.1 ≈ 1.2 ≈ 1.3 ≈ ... ≈ 2 ≈ ... ≈ 3 ≈ ... ≈ infinity, that's
@@ -35,14 +31,7 @@ fn test_calc_regular_rsqrt() {
 #[test]
 fn test_calc_specific_fast_rsqrt() {
     let params: &[f32] = &[1.0, 1.1, 100.0, 1337.0, 123.456_79, 1337.1337];
-    let results: &[f32] = &[
-        1.0,
-        0.953_462_6,
-        0.1,
-        0.027_348_55,
-        0.09,
-        0.027_347_183,
-    ];
+    let results: &[f32] = &[1.0, 0.953_462_6, 0.1, 0.027_348_55, 0.09, 0.027_347_183];
     for (n, m) in zip(params, results) {
         assert!(about_same(revsqrt::fast_inverse_sqrt(*n), *m))
     }
@@ -51,14 +40,7 @@ fn test_calc_specific_fast_rsqrt() {
 #[test]
 fn test_calc_specific_reqular_rsqrt() {
     let params: &[f32] = &[1.0, 1.1, 100.0, 1337.0, 123.456_79, 1337.1337];
-    let results: &[f32] = &[
-        1.0,
-        0.953_462_6,
-        0.1,
-        0.027_348_55,
-        0.09,
-        0.027_347_183,
-    ];
+    let results: &[f32] = &[1.0, 0.953_462_6, 0.1, 0.027_348_55, 0.09, 0.027_347_183];
     for (n, m) in zip(params, results) {
         assert_eq!(revsqrt::regular_inverse_sqrt(*n), *m)
     }
