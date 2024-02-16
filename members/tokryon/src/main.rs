@@ -43,6 +43,7 @@ fn status(start: &Instant, info: (u128, usize), separate: usize) -> bool {
     eq
 }
 
+#[allow(clippy::uninit_vec)]
 #[tokio::main]
 async fn main() {
     // Lets say that we want to add many numbers FAST

@@ -1,7 +1,6 @@
-use anyhow;
-use chrono;
+#![allow(clippy::disallowed_names)]
+
 use serde::{Deserialize, Serialize};
-use serde_json;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "UPPERCASE")]

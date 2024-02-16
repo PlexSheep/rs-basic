@@ -2,8 +2,8 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use revsqrt::{fast_inverse_sqrt, regular_inverse_sqrt};
 
 const SIZE: f32 = 1337.1337;
-const FCONST: f32 = 1024.12481224;
-const FCONST1: f32 = 4025.724812234;
+const FCONST: f32 = 1_024.124_8;
+const FCONST1: f32 = 4_025.724_9;
 
 pub fn single_input(c: &mut Criterion) {
     c.bench_with_input(BenchmarkId::new("regular rsqrt", SIZE), &SIZE, |b, &s| {

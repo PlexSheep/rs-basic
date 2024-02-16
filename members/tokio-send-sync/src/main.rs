@@ -12,7 +12,7 @@ async fn foo(t: TestType) -> Result<TcpListener, std::io::Error> {
 #[tokio::main()]
 async fn main() {
     let testdata: TestType = 1337;
-    let arcmut = Arc::new(Mutex::new(testdata));
+    let _arcmut = Arc::new(Mutex::new(testdata));
     tokio::spawn(async move {
         let a = foo(testdata).await;
         a.unwrap().accept().await

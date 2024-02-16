@@ -291,7 +291,6 @@ fn main() {
     } {
         Some(inner) => {
             println!("{:?}", inner);
-            return;
         }
         None => unreachable!(),
     }

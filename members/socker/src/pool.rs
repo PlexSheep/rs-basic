@@ -3,6 +3,7 @@ use std::{
     thread,
 };
 
+#[allow(dead_code)]
 struct WorkerThread {
     handle: thread::JoinHandle<()>,
     id: usize,
@@ -24,6 +25,7 @@ impl WorkerThread {
 /// Shares tasks over multiple worker threads
 pub struct ThreadPool {
     /// executes tasks assigned by the instructor
+    #[allow(dead_code)]
     workers: Vec<WorkerThread>,
     /// sends instructions to the workers
     sender: mpsc::Sender<Job>,
@@ -41,8 +43,8 @@ impl ThreadPool {
     ///
     /// The `new` function will panic if the size is zero.
     pub fn build(size: usize) -> Result<ThreadPool, String> {
-        if !(size > 0) {
-            return Err(format!("cannot build a thread pool with size 0!"));
+        if size == 0 {
+            return Err("cannot build a thread pool with size 0!".to_string());
         }
         let (sender, receiver) = mpsc::channel();
         let receiver = Arc::new(Mutex::new(receiver));

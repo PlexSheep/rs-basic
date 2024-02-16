@@ -1,8 +1,8 @@
 use std::iter::zip;
 
-use revsqrt;
 
-use rand;
+
+
 
 // is n about the same as m?
 // This is actually not so easy! How do you measure "about same"ness?
@@ -34,14 +34,14 @@ fn test_calc_regular_rsqrt() {
 
 #[test]
 fn test_calc_specific_fast_rsqrt() {
-    let params: &[f32] = &[1.0, 1.1, 100.0, 1337.0, 123.45678900, 1337.1337];
+    let params: &[f32] = &[1.0, 1.1, 100.0, 1337.0, 123.456_79, 1337.1337];
     let results: &[f32] = &[
         1.0,
-        0.9534625892455922,
+        0.953_462_6,
         0.1,
-        0.02734854943722097,
-        0.0900000004095,
-        0.027347182112297627,
+        0.027_348_55,
+        0.09,
+        0.027_347_183,
     ];
     for (n, m) in zip(params, results) {
         assert!(about_same(revsqrt::fast_inverse_sqrt(*n), *m))
@@ -50,20 +50,21 @@ fn test_calc_specific_fast_rsqrt() {
 
 #[test]
 fn test_calc_specific_reqular_rsqrt() {
-    let params: &[f32] = &[1.0, 1.1, 100.0, 1337.0, 123.45678900, 1337.1337];
+    let params: &[f32] = &[1.0, 1.1, 100.0, 1337.0, 123.456_79, 1337.1337];
     let results: &[f32] = &[
         1.0,
-        0.9534625892455922,
+        0.953_462_6,
         0.1,
-        0.02734854943722097,
-        0.0900000004095,
-        0.027347182112297627,
+        0.027_348_55,
+        0.09,
+        0.027_347_183,
     ];
     for (n, m) in zip(params, results) {
         assert_eq!(revsqrt::regular_inverse_sqrt(*n), *m)
     }
 }
 
+#[allow(clippy::assertions_on_constants)]
 #[test]
 #[ignore] // this test confuses the CI
 fn test_fail() {
