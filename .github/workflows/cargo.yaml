@@ -6,7 +6,8 @@ on:
       # - '!master'
 
 jobs:
-  format:
+  CI:
+    runs-on: ubuntu-latest
     name: cargo CI
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
@@ -16,7 +17,7 @@ jobs:
       - name: get repo
         uses: actions/checkout@v4
       - name: install rust
-        uses: https://github.com/dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@stable
       - name: install additional rust things
         run: rustup component add rustfmt
       - name: config custom registry
@@ -37,7 +38,7 @@ jobs:
       - name: cargo test
         run: cargo test --all-features --all-targets
       - name: commit back to repository
-        uses: https://github.com/stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
