@@ -1,3 +1,5 @@
+#[rustfmt::skip]
+
 /// I did it. I created the stupidest program ever
 ///
 /// this is so stupid, it literally makes rustfmt time out.
