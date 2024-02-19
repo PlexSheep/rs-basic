@@ -4,7 +4,7 @@ use tokio::time::Instant;
 
 // if we make these larger, our computer can be used as a heater🔥
 type Danum = u16; // you wont see any statuses for a long time with anything bigger than u16
-const EXP: usize = 8; // FIXME: If this goes lower than 7, somehow the mpsc breaks?
+const EXP: usize = 10; // FIXME: If this goes lower than 10, somehow the mpsc breaks sometimes
 const CAP: usize = 1 << EXP;
 const M: u128 = CAP as u128 * Danum::MAX as u128;
 
