@@ -26,6 +26,16 @@ enum Color {
     Red,
 }
 
+use serde_repr::{Serialize_repr, Deserialize_repr};
+
+#[derive(Serialize_repr, Deserialize_repr, Clone, Debug, PartialEq)]
+#[repr(u8)]
+enum CLike {
+    Amida = 1,
+    Yamda = 2,
+    Omaba = 10,
+}
+
 fn main() -> anyhow::Result<()> {
     let qux_source = r#"{
         "some Key": [1, 2, 3],
@@ -52,5 +62,11 @@ fn main() -> anyhow::Result<()> {
     dbg!(&color);
     let color_str = serde_json::to_string(&color)?;
     dbg!(&color_str);
+
+    let cl = CLike::Omaba;
+    let clrepr = serde_json::to_string(&cl)?;
+    dbg!(&clrepr);
+    let cl_from = serde_json::from_str(&clrepr)?;
+    dbg!(cl == cl_from);
     Ok(())
 }
