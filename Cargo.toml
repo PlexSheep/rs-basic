@@ -13,6 +13,7 @@ members = [
   "members/tokryon",
   "members/tokio-send-sync",
   "members/matchmatchmatch",
+  "members/future_stream",
 ]
 default-members = [
   ".",
@@ -28,6 +29,7 @@ default-members = [
   "members/tokryon",
   "members/tokio-send-sync",
   "members/matchmatchmatch",
+  "members/future_stream",
 ]
 
 [workspace.dependencies]
@@ -42,6 +44,7 @@ tokio = { version = "1.35.1", features = [
   "time",
   "sync",
 ] }
+futures = { version = "0.3.30", features = ["executor"] }
 
 [package]
 name = "rs-basic"
