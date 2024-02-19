@@ -26,7 +26,7 @@ enum Color {
     Red,
 }
 
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Serialize_repr, Deserialize_repr, Clone, Debug, PartialEq)]
 #[repr(u8)]
