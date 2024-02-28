@@ -14,10 +14,12 @@ members = [
   "members/tokio-send-sync",
   "members/matchmatchmatch",
   "members/future_stream",
+  "members/mpsc",
 ]
 default-members = [
   ".",
   "members/revsqrt",
+  "members/mpsc",
   "members/criterion-demo",
   "members/shortc",
   "members/pest-demo",
@@ -31,6 +33,7 @@ default-members = [
   "members/matchmatchmatch",
   "members/future_stream",
 ]
+publish = false
 
 [workspace.dependencies]
 anyhow = "1.0.79"
