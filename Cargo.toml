@@ -15,11 +15,13 @@ members = [
   "members/matchmatchmatch",
   "members/future_stream",
   "members/mpsc",
+  "members/mpsc-full",
 ]
 default-members = [
   ".",
   "members/revsqrt",
   "members/mpsc",
+  "members/mpsc-full",
   "members/criterion-demo",
   "members/shortc",
   "members/pest-demo",
