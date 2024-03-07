@@ -16,9 +16,11 @@ members = [
   "members/future_stream",
   "members/mpsc",
   "members/mpsc-full",
+  "members/echargs",
 ]
 default-members = [
   ".",
+  "members/echargs",
   "members/revsqrt",
   "members/mpsc",
   "members/mpsc-full",
