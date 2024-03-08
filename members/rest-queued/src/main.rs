@@ -7,7 +7,7 @@
 //! This way, we have a distribution api, that clients can use to get any messages they have not
 //! yet received.
 
-use libpt::log::{debug, info};
+use libpt::log::info;
 
 mod routes;
 use routes::*;

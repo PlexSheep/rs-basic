@@ -51,10 +51,7 @@ impl Item {
         let seq = SEQUENCE.load(std::sync::atomic::Ordering::Relaxed);
         SEQUENCE.store(seq + 1, std::sync::atomic::Ordering::Relaxed);
 
-        Self {
-            body: msg,
-            seq,
-        }
+        Self { body: msg, seq }
     }
 }
 
