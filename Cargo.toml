@@ -19,6 +19,7 @@ members = [
   "members/echargs",
   "members/claptest",
   "members/rest",
+  "members/rest-queued",
 ]
 default-members = [
   ".",
@@ -40,6 +41,7 @@ default-members = [
   "members/matchmatchmatch",
   "members/future_stream",
   "members/rest",
+  "members/rest-queued",
 ]
 publish = false
 
@@ -58,6 +60,7 @@ tokio = { version = "1.35.1", features = [
 futures = { version = "0.3.30", features = ["executor"] }
 serde = { version = "1.0.171", features = ["derive"] }
 serde_json = "1.0.102"
+libpt = { version = "0.4.2", features = ["log"] }
 
 [package]
 name = "rs-basic"
