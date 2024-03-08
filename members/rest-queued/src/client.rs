@@ -1,7 +1,7 @@
 use std::{convert::Infallible, fmt::Display, str::FromStr};
 
 use crate::{store::Sequence, Item, Store};
-use rand::{prelude::*, seq::SliceRandom};
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
 const ALPHABET: &str = "qwertzuiopasdfghjklyxcvbnmQWERTZUIOPASDFGHJKLYXCVBNM";
