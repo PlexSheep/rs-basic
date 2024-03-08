@@ -126,3 +126,13 @@ impl FromStr for Token {
         Ok(Self { inner: s })
     }
 }
+
+mod test {
+    use super::*;
+    #[test]
+    fn test_new_dbg() {
+        let c = Client::new_debug();
+        assert_eq!(c.token.to_string(), "mytok");
+        assert_eq!(c.id.to_string(), "myid");
+    }
+}

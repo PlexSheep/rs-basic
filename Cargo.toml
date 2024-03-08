@@ -20,9 +20,11 @@ members = [
   "members/claptest",
   "members/rest",
   "members/rest-queued",
+  "members/fluent",
 ]
 default-members = [
   ".",
+  "members/fluent",
   "members/echargs",
   "members/revsqrt",
   "members/claptest",
