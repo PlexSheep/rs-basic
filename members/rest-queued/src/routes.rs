@@ -2,13 +2,13 @@ use std::{collections::HashMap, convert::Infallible, str::FromStr};
 
 use libpt::log::{debug, error, info};
 use warp::{
-    filters::{path::param, BoxedFilter},
+    filters::BoxedFilter,
     http::StatusCode,
     reject::{MissingHeader, Rejection},
     reply, Filter, Reply,
 };
 
-use crate::{Client, Id, Item, Store, Token, StoreErr};
+use crate::{Client, Id, Store, StoreErr, Token};
 
 pub fn with_store(store: Store) -> impl Filter<Extract = (Store,), Error = Infallible> + Clone {
     warp::any().map(move || store.clone())
