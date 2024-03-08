@@ -17,11 +17,14 @@ members = [
   "members/mpsc",
   "members/mpsc-full",
   "members/echargs",
+  "members/claptest",
+  "members/rest",
 ]
 default-members = [
   ".",
   "members/echargs",
   "members/revsqrt",
+  "members/claptest",
   "members/mpsc",
   "members/mpsc-full",
   "members/criterion-demo",
@@ -36,6 +39,7 @@ default-members = [
   "members/tokio-send-sync",
   "members/matchmatchmatch",
   "members/future_stream",
+  "members/rest",
 ]
 publish = false
 
