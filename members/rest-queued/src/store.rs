@@ -1,4 +1,4 @@
-use libpt::log::debug;
+use libpt::log::{debug, info, warn};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{HashMap, VecDeque},
@@ -8,6 +8,8 @@ use std::{
 use tokio::sync::Mutex;
 
 use crate::{Client, Id, Token};
+
+pub const TOO_MANY_ITEMS: usize = 2048;
 
 pub static SEQUENCE: AtomicUsize = AtomicUsize::new(0);
 pub static LAST_SEQUENCE: AtomicUsize = AtomicUsize::new(0);
@@ -49,14 +51,17 @@ impl Item {
         let seq = SEQUENCE.load(std::sync::atomic::Ordering::Relaxed);
         SEQUENCE.store(seq + 1, std::sync::atomic::Ordering::Relaxed);
 
-        Self { body: msg, seq }
+        Self {
+            body: msg,
+            seq,
+        }
     }
 }
 
 #[cfg(debug_assertions)]
 impl Drop for Item {
     fn drop(&mut self) {
-        debug!("dropping {:?}", self)
+        debug!("dropping {:?}", self.seq)
     }
 }
 
@@ -83,7 +88,26 @@ impl Store {
 
     pub async fn add_item(&self, item: Item) {
         let mut store = self.all.lock().await;
+        if store.len() > TOO_MANY_ITEMS {
+            warn!(
+                "Too many items ({}), removing old ones until okay",
+                store.len()
+            );
+            while let Some(_item) = store.front() {
+                if store.len() < TOO_MANY_ITEMS {
+                    break;
+                }
+                store.pop_front();
+            }
+        }
         store.push_back(item);
+    }
+
+    pub async fn status(&self) {
+        let clients_len = self.clients.lock().await.len();
+        let item_len = self.all.lock().await.len();
+
+        info!("status: {clients_len} clients; {item_len} items");
     }
 
     pub async fn get_items(&self) -> Vec<Item> {
@@ -109,6 +133,8 @@ impl Store {
             }
             store.pop_front().unwrap();
         }
+        drop(store); // free the lock
+        self.status().await;
     }
 
     pub(crate) async fn adjust_lseq(&self, newer: Sequence) -> Sequence {
@@ -144,6 +170,11 @@ pub async fn data_processing(store: Store) {
     loop {
         let item = serde_json::json!({"foo": "bar", "value": iter}).into();
         store.add_item(item).await;
+
+        if iter % 5 == 0 {
+            store.status().await;
+        }
+
         iter += 1;
         tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
     }
