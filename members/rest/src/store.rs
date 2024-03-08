@@ -1,5 +1,5 @@
 use std::{collections::VecDeque, sync::Arc};
-use serde::Deserialize;
+
 use tokio::sync::Mutex;
 
 #[derive(Debug, Clone)]

@@ -3,7 +3,7 @@ use std::convert::Infallible;
 use libpt::log::info;
 use warp::{Filter, Rejection, Reply};
 
-use crate::{Item, Store};
+use crate::Store;
 
 pub fn with_store(store: Store) -> impl Filter<Extract = (Store,), Error = Infallible> + Clone {
     warp::any().map(move || store.clone())
