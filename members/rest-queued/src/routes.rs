@@ -5,7 +5,8 @@ use warp::{
     filters::BoxedFilter,
     http::StatusCode,
     reject::{MissingHeader, Rejection},
-    reply, Filter, Reply,
+    reply::{self, Json},
+    Filter, Reply,
 };
 
 use crate::{Client, Id, Store, StoreErr, Token};
@@ -62,7 +63,7 @@ pub async fn item_getter(
 }
 
 // GET /api/v1/items
-pub fn get_items(store: Store) -> BoxedFilter<(impl Reply,)> {
+pub fn get_items(store: Store) -> impl Filter<Extract = (Json,), Error = warp::Rejection> + Clone {
     warp::path!("api" / "v1" / "items")
         .and(warp::get())
         .and(warp::query::<HashMap<String, String>>())
@@ -74,7 +75,9 @@ pub fn get_items(store: Store) -> BoxedFilter<(impl Reply,)> {
 }
 
 // GET /api/v1/register
-pub fn get_register(store: Store) -> BoxedFilter<(impl Reply,)> {
+pub fn get_register(
+    store: Store,
+) -> impl Filter<Extract = (Json,), Error = warp::Rejection> + Clone {
     warp::path!("api" / "v1" / "register")
         .and(warp::get())
         .and(with_store(store))
@@ -87,4 +90,72 @@ pub fn get_register(store: Store) -> BoxedFilter<(impl Reply,)> {
             response
         })
         .boxed()
+}
+
+mod test {
+    use warp::{
+        http::StatusCode,
+        hyper::{self, body::*},
+        reply::{Json, Reply},
+    };
+
+    use std::str::FromStr;
+
+    #[tokio::test]
+    async fn test_register_and_get() {
+        let store = crate::Store::new();
+        let filter = super::get_register(store.clone());
+
+        let response: warp::reply::Response = warp::test::request()
+            .path("/api/v1/register")
+            .filter(&filter)
+            .await
+            .unwrap()
+            .into_response();
+
+        assert_eq!(response.status(), StatusCode::OK);
+        let body_raw: Bytes = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body_json: serde_json::Value = serde_json::from_slice(&body_raw).unwrap();
+
+        assert!(body_json.is_object());
+        let id: crate::Id = crate::Id::from_str(
+            &body_json
+                .get("id")
+                .expect("response has no field 'id'")
+                .to_owned()
+                .to_string(),
+        )
+        .unwrap();
+        let token: crate::Token = crate::Token::from_str(
+            &body_json
+                .get("token")
+                .expect("response has no field 'token'")
+                .to_owned()
+                .to_string(),
+        )
+        .unwrap();
+
+        assert_eq!(id.len(), crate::ID_LEN);
+        assert_eq!(token.len(), crate::TOK_LEN);
+
+        let filter = super::get_items(store);
+        let response: warp::reply::Response = warp::test::request()
+            .path(format!("/api/v1/items/?id={id}").as_str())
+            .header("Token", token.to_string())
+            .filter(&filter)
+            .await
+            .unwrap()
+            .into_response();
+        assert_eq!(response.status(), StatusCode::OK);
+        let body_raw: Bytes = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body_json: serde_json::Value = serde_json::from_slice(&body_raw).unwrap();
+        assert!(body_json.is_array());
+
+        for i in 0..2 {
+            assert!(body_json[i].is_object());
+            let item: crate::Item =
+                serde_json::from_value(body_json[i].clone().take()).unwrap();
+            assert_eq!(item.seq, i);
+        }
+    }
 }

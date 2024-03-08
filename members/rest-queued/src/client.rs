@@ -4,7 +4,9 @@ use crate::{store::Sequence, Item, Store};
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
-const ALPHABET: &str = "qwertzuiopasdfghjklyxcvbnmQWERTZUIOPASDFGHJKLYXCVBNM";
+pub const ALPHABET: &str = "qwertzuiopasdfghjklyxcvbnmQWERTZUIOPASDFGHJKLYXCVBNM";
+pub const TOK_LEN: usize = 40;
+pub const ID_LEN: usize = 20;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Client {
@@ -61,10 +63,15 @@ impl Id {
     pub fn new() -> Self {
         let mut rng = rand::thread_rng();
         let mut data = ALPHABET.to_string().into_bytes();
+        data.repeat(ID_LEN);
         data.shuffle(&mut rng);
         Self {
-            inner: String::from_utf8(data[..20].into()).unwrap(),
+            inner: String::from_utf8(data[..ID_LEN].into()).unwrap(),
         }
+    }
+
+    pub fn len(&self) -> usize {
+        self.inner.len()
     }
 }
 
@@ -72,9 +79,8 @@ impl FromStr for Id {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self {
-            inner: s.to_string(),
-        })
+        let s = s.replace('"', "");
+        Ok(Self { inner: s })
     }
 }
 
@@ -84,7 +90,7 @@ impl Display for Id {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Token {
     #[serde(rename = "token")]
     inner: String,
@@ -94,10 +100,21 @@ impl Token {
     pub fn new() -> Self {
         let mut rng = rand::thread_rng();
         let mut data = ALPHABET.to_string().into_bytes();
+        data.repeat(TOK_LEN);
         data.shuffle(&mut rng);
         Self {
-            inner: String::from_utf8(data).unwrap(),
+            inner: String::from_utf8(data[..TOK_LEN].to_vec()).unwrap(),
         }
+    }
+
+    pub fn len(&self) -> usize {
+        self.inner.len()
+    }
+}
+
+impl Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.inner)
     }
 }
 
@@ -105,8 +122,7 @@ impl FromStr for Token {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self {
-            inner: s.to_string(),
-        })
+        let s = s.replace('"', "");
+        Ok(Self { inner: s })
     }
 }
