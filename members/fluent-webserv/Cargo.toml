@@ -1,5 +1,5 @@
 [package]
-name = "fluent"
+name = "fluent-webserv"
 version = "0.1.0"
 edition = "2021"
 
