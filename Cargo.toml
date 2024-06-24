@@ -22,6 +22,7 @@ members = [
   "members/rest-queued",
   "members/fluent-demo",
   "members/onlytoken",
+  "members/sqlite-demo",
 ]
 default-members = [
   ".",
@@ -46,6 +47,7 @@ default-members = [
   "members/future_stream",
   "members/rest",
   "members/rest-queued",
+  "members/sqlite-demo",
 ]
 publish = false
 
