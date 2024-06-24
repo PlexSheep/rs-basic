@@ -24,6 +24,7 @@ enum Color {
     Green,
     Yellow,
     Red,
+    Custom(String)
 }
 
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -62,6 +63,9 @@ fn main() -> anyhow::Result<()> {
     dbg!(&color);
     let color_str = serde_json::to_string(&color)?;
     dbg!(&color_str);
+
+    let custom_color = Color::Custom("Morange".to_string());
+    dbg!(serde_json::to_string(&custom_color).unwrap());
 
     let cl = CLike::Omaba;
     let clrepr = serde_json::to_string(&cl)?;
