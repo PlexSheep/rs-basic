@@ -22,9 +22,11 @@ members = [
   "members/rest-queued",
   "members/fluent-demo",
   "members/fluent-webserv",
+  "members/onlytoken",
 ]
 default-members = [
   ".",
+  "members/onlytoken",
   "members/fluent-webserv",
   "members/fluent-demo",
   "members/echargs",
