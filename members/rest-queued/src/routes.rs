@@ -99,6 +99,7 @@ mod test {
         reply::{Json, Reply},
     };
 
+    use std::convert::From;
     use std::str::FromStr;
 
     #[tokio::test]
