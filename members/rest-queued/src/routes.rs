@@ -101,6 +101,7 @@ mod test {
 
     use std::convert::From;
     use std::str::FromStr;
+    use hyper::body::Bytes;
 
     #[tokio::test]
     async fn test_register_and_get() {
@@ -115,7 +116,7 @@ mod test {
             .into_response();
 
         assert_eq!(response.status(), StatusCode::OK);
-        let body_raw: Bytes = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body_raw = hyper::body::to_bytes(response.into_body()).await.unwrap();
         let body_json: serde_json::Value = serde_json::from_slice(&body_raw).unwrap();
 
         assert!(body_json.is_object());
@@ -148,14 +149,13 @@ mod test {
             .unwrap()
             .into_response();
         assert_eq!(response.status(), StatusCode::OK);
-        let body_raw: Bytes = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body_raw = hyper::body::to_bytes(response.into_body()).await.unwrap();
         let body_json: serde_json::Value = serde_json::from_slice(&body_raw).unwrap();
         assert!(body_json.is_array());
 
         for i in 0..2 {
             assert!(body_json[i].is_object());
-            let item: crate::Item =
-                serde_json::from_value(body_json[i].clone().take()).unwrap();
+            let item: crate::Item = serde_json::from_value(body_json[i].clone().take()).unwrap();
             assert_eq!(item.seq, i);
         }
     }
