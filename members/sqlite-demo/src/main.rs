@@ -1,13 +1,12 @@
-use std::io::{BufRead, Write};
-use std::path::PathBuf;
-use std::{env, fs, io};
-
-use anyhow::Ok;
 /// This demo application uses a sqlite file to store some data. It does *not* use ORM (that would
 /// be done with the `diesel` crate.)!
 ///
 /// A very useful ressource is the
 /// [rust-cookbook](https://rust-lang-nursery.github.io/rust-cookbook/database/sqlite.html).
+use std::io::{BufRead, Write};
+use std::path::PathBuf;
+use std::{env, fs, io};
+
 use rusqlite::{Connection, Rows};
 
 const DBNAME: &str = "cats.db";
@@ -289,6 +288,9 @@ fn main() -> anyhow::Result<()> {
     let mut buf: String = String::new();
 
     loop {
+        buf.clear();
+        print!("{}[2J", 27 as char); // clear terminal
+        io::stdout().flush()?;
         print!("(A)dd a cat, (F)ind a cat, (P)rint out all data, (D)elete data, or (E)xit?\n> ");
         io::stdout().flush()?;
         let _ = stdin.lock().read_line(&mut buf);
@@ -324,12 +326,52 @@ fn main() -> anyhow::Result<()> {
                         }
                     }
                     "COLOR" => {
-                        // TODO: we need to delete cats that have this color too, or abort if such cats exist, or give
-                        // the user the option to choose!
-                        todo!();
-                        let mut stmt = conn
-                            .prepare(&format!("DELETE FROM {TABLE_CAT_COLOR} WHERE id = (?1)"))?;
-                        let _ = nums.iter().map(|n| stmt.execute([n]));
+                        // Cats have colors, so if we delete a color, we need to delete cats with
+                        // that color too.
+                        let mut stmt_how_many_cats_with_color = conn.prepare(&format!(
+                            "SELECT cc.id FROM {TABLE_CAT} c, {TABLE_CAT_COLOR}
+                            cc WHERE c.color_id = (?1)"
+                        ))?;
+                        let mut stmt_cats_with_color = conn.prepare(&format!(
+                            "SELECT cc.id FROM {TABLE_CAT} c, {TABLE_CAT_COLOR}
+                            cc WHERE c.color_id = (?1)"
+                        ))?;
+
+                        for color_id in &nums {
+                            let cats_amount: usize = stmt_how_many_cats_with_color
+                                .query_row([color_id], |row| row.get::<_, usize>(0))?;
+
+                            if cats_amount > 0 {
+                                // FIXME: cats is empty?
+                                let mut cats = stmt_cats_with_color.query([color_id])?;
+                                let mut cat_ids: Vec<usize> = Vec::new();
+
+                                while let Some(cat) = cats.next()? {
+                                    cat_ids.push(cat.get::<_, usize>(0)?);
+                                }
+
+                                println!("You are about to also delete these cats, as they have the color id {color_id}. Type 'YES' to confirm");
+                                print_cats(&conn, &mut cats)?;
+                                buf.clear();
+                                let _ = stdin.lock().read_line(&mut buf); // wait for enter as confirmation
+                                buf = buf.trim().to_string();
+                                buf = buf.to_uppercase().to_string();
+                                if buf.as_str() != "YES" {
+                                    continue;
+                                }
+                                // FIXME: I DELETED ALL THE CATS OH NO
+                                let mut stmt = conn
+                                    .prepare(&format!("DELETE FROM {TABLE_CAT} WHERE id = (?1)"))?;
+                                for cat_id in cat_ids {
+                                    stmt.execute([cat_id])?;
+                                }
+                            }
+
+                            let mut stmt = conn.prepare(&format!(
+                                "DELETE FROM {TABLE_CAT_COLOR} WHERE id = (?1)"
+                            ))?;
+                            let _ = nums.iter().map(|n| stmt.execute([n]));
+                        }
                     }
                     _ => {
                         println!("{USAGE_DELETE}");
@@ -342,9 +384,6 @@ fn main() -> anyhow::Result<()> {
         }
         println!("\n(Enter to continue)");
         let _ = stdin.lock().read_line(&mut buf); // wait for enter as confirmation
-        buf.clear();
-        print!("{}[2J", 27 as char); // clear terminal
-        io::stdout().flush()?;
     }
 
     Ok(())
