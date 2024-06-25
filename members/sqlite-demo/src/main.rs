@@ -1,5 +1,6 @@
+use std::io::{BufRead, Write};
 use std::path::PathBuf;
-use std::{env, fs};
+use std::{env, fs, io};
 
 use anyhow::Ok;
 /// This demo application uses a sqlite file to store some data. It does *not* use ORM (that would
@@ -78,7 +79,7 @@ fn setup(conn: &Connection) -> anyhow::Result<()> {
             "CREATE TABLE IF NOT EXISTS {TABLE_CAT} (
              id INTEGER PRIMARY KEY,
              name TEXT NOT NULL COLLATE NOCASE,
-             COLOR_ID INTEGER NOT NULL REFERENCES CAT_COLORS(ID)
+             color_id INTEGER NOT NULL REFERENCES CAT_COLORS(ID)
          )"
         ),
         (),
@@ -87,43 +88,141 @@ fn setup(conn: &Connection) -> anyhow::Result<()> {
     Ok(())
 }
 
+// color names are unique, so we use the color name instead of the id because it's easier
+fn check_if_color_exists(conn: &Connection, color: &str) -> anyhow::Result<bool> {
+    let mut stmt = conn.prepare(&format!(
+        "SELECT EXISTS( SELECT 1 FROM {TABLE_CAT_COLOR} WHERE name = (LOWER(?1)))"
+    ))?;
+
+    // we need the return or the temporary result is dropped somehow
+    #[allow(clippy::needless_return)]
+    return Ok(stmt
+        .query([color.to_string()])?
+        .next()?
+        .unwrap()
+        .get::<usize, usize>(0)?
+        == 1);
+}
+
+// note that cat names are not UNIQUE, so we need to use the id instead
+fn check_if_cat_exists(conn: &Connection, id: usize) -> anyhow::Result<bool> {
+    let mut stmt = conn.prepare(&format!(
+        "SELECT EXISTS( SELECT 1 FROM {TABLE_CAT} WHERE id = (?1))"
+    ))?;
+
+    // we need the return or the temporary result is dropped somehow
+    #[allow(clippy::needless_return)]
+    return Ok(stmt.query([id])?.next()?.unwrap().get::<usize, usize>(0)? == 1);
+}
+
 /// Add a new color to the cat_colors table
 ///
 /// Will fail if the sql fails
 ///
-/// If the color already exists, will return Ok(())
+/// If the color already exists, will return Ok(id)
 ///
 /// The table stores the name in lowercase
-fn new_color(conn: &Connection, color: &str) -> anyhow::Result<()> {
-    // check if the color already exists, so we can just try adding a color and not worry if it
-    // already exists
+///
+/// Returns the id of the color
+fn new_color(conn: &Connection, color: &str) -> anyhow::Result<usize> {
+    if check_if_color_exists(conn, color)? {
+        return Ok(get_color_id(conn, color)?);
+    }
 
-    let mut stmt = conn.prepare(&format!(
-        "SELECT EXISTS( SELECT 1 FROM {TABLE_CAT_COLOR} WHERE name = (?1))"
-    ))?;
-    if let Some(row) = stmt.query([color.to_string()])?.next()? {
-        if row.get::<usize, usize>(0)? == 1 {
-            // the color already exists
-            return Ok(());
-        }
-    };
-
-    // do the inserting
     conn.execute(
-        "INSERT INTO cat_colors (name) VALUES (?1)",
+        &format!("INSERT INTO {TABLE_CAT_COLOR} (name) VALUES (LOWER(?1))"),
         [color.to_string()],
     )?;
 
-    Ok(())
+    Ok(get_color_id(conn, color)?)
+}
+
+fn get_color_id(conn: &Connection, color: &str) -> anyhow::Result<usize> {
+    Ok(conn.query_row(
+        &format!("SELECT id FROM {TABLE_CAT_COLOR} WHERE name = (LOWER(?1))"),
+        [color.to_string()],
+        |row| row.get::<usize, usize>(0),
+    )?)
+}
+
+fn get_color_by_id(conn: &Connection, id: usize) -> anyhow::Result<String> {
+    Ok(conn.query_row(
+        &format!("SELECT name FROM {TABLE_CAT_COLOR} WHERE id = (?1)"),
+        [id.to_string()],
+        |row| row.get::<usize, String>(0),
+    )?)
+}
+
+fn new_cat(conn: &Connection, name: &str, color_id: usize) -> anyhow::Result<usize> {
+    conn.execute(
+        &format!("INSERT INTO {TABLE_CAT} (name, color_id) VALUES (LOWER(?1), ?2)"),
+        [name.to_string(), color_id.to_string()],
+    )?;
+
+    Ok(conn.last_insert_rowid() as usize)
+}
+
+fn get_cat_color(conn: &Connection, id: usize) -> anyhow::Result<String> {
+    Ok(conn.query_row(
+        &format!("SELECT cc.name FROM {TABLE_CAT_COLOR} cc, {TABLE_CAT} c WHERE c.id = (?1) AND c.color_id = cc.id"),
+        [id.to_string()],
+        |row| row.get::<usize, String>(0),
+    )?)
+}
+
+fn interactive_add_cat(conn: &Connection) -> anyhow::Result<usize> {
+    let stdin = io::stdin();
+    print!("the name of your cat?\n> ");
+    io::stdout().flush()?;
+    let mut cat_name: String = String::new();
+    let _ = stdin.read_line(&mut cat_name)?;
+    cat_name = cat_name.trim().to_string();
+    dbg!(&cat_name);
+
+    print!("the color of your cat?\n> ");
+    io::stdout().flush()?;
+    let mut cat_color: String = String::new();
+    let _ = stdin.read_line(&mut cat_color)?;
+    cat_color = cat_color.trim().to_string();
+    dbg!(&cat_color);
+    new_color(conn, &cat_color)?;
+
+    let cat_id = new_cat(conn, &cat_name, get_color_id(conn, &cat_color)?)?;
+    assert!(check_if_cat_exists(conn, cat_id)?);
+    println!("your cat has id {cat_id}");
+    println!("your cat has color '{}'", get_color_by_id(conn, cat_id)?);
+
+    Ok(cat_id)
 }
 
 fn main() -> anyhow::Result<()> {
     let conn = connect()?;
 
     setup(&conn)?;
-    new_color(&conn, "black")?;
-    new_color(&conn, "red")?;
-    new_color(&conn, "white")?;
+
+    let stdin = io::stdin();
+    let mut buf: String = String::new();
+
+    loop {
+        print!("(A)dd a cat, (F)ind a cat or (E)xit?\n> ");
+        io::stdout().flush()?;
+        let _ = stdin.lock().read_line(&mut buf);
+        buf = buf.trim().to_string();
+        match buf.as_str() {
+            "A" => {
+                interactive_add_cat(&conn)?;
+            }
+            "F" => {
+                todo!()
+            }
+            "E" => {
+                println!("Goodbye");
+                break;
+            }
+            _ => (),
+        }
+        buf.clear();
+    }
 
     Ok(())
 }
