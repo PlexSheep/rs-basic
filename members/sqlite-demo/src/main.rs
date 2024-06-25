@@ -14,6 +14,11 @@ const DBNAME: &str = "cats.db";
 const TABLE_CAT_COLOR: &str = "cat_colors";
 const TABLE_CAT: &str = "cats";
 
+const USAGE_DELETE: &str = "Usage:
+> D cat 15 (to delete cat with id 15)
+> D cat 15 16 (to delete cat with id 15 and 16)
+> D color 5 (to delete color with id 5)";
+
 fn connect() -> anyhow::Result<Connection> {
     let mut wd = env::current_dir()?;
     let mut dbpath: Option<PathBuf> = None;
@@ -216,7 +221,6 @@ fn interactive_find_cat(conn: &Connection) -> anyhow::Result<()> {
     let mut cat_color: String = String::new();
     let _ = stdin.read_line(&mut cat_color)?;
     cat_color = cat_color.trim().to_string();
-    new_color(conn, &cat_color)?;
 
     let mut stmt = conn.prepare(&format!(
         "SELECT * FROM {TABLE_CAT} c, {TABLE_CAT_COLOR} cc
@@ -224,7 +228,7 @@ fn interactive_find_cat(conn: &Connection) -> anyhow::Result<()> {
         AND (c.name LIKE (?1) OR cc.name LIKE (?2))"
     ))?;
 
-    let mut fitting_cats = stmt.query([cat_name,cat_color])?;
+    let mut fitting_cats = stmt.query([cat_name, cat_color])?;
     println!("These cats might fit your description:\n");
     print_cats(conn, &mut fitting_cats)?;
 
@@ -285,26 +289,56 @@ fn main() -> anyhow::Result<()> {
     let mut buf: String = String::new();
 
     loop {
-        print!("(A)dd a cat, (F)ind a cat, (P)rint out all data, or (E)xit?\n> ");
+        print!("(A)dd a cat, (F)ind a cat, (P)rint out all data, (D)elete data, or (E)xit?\n> ");
         io::stdout().flush()?;
         let _ = stdin.lock().read_line(&mut buf);
         buf = buf.trim().to_string();
         buf = buf.to_uppercase().to_string();
-        match buf.as_str() {
-            "A" => {
-                interactive_add_cat(&conn)?;
+        if buf.starts_with("A") {
+            interactive_add_cat(&conn)?;
+        } else if buf.starts_with("F") {
+            interactive_find_cat(&conn)?;
+        } else if buf.starts_with("P") {
+            print_all_data(&conn)?;
+        } else if buf.starts_with("D") {
+            let words: Vec<&str> = buf.split(' ').collect();
+            dbg!(&words);
+            if words.len() < 2 {
+                println!("{USAGE_DELETE}");
+            } else {
+                let mode = words[1];
+                let nums: Vec<usize> = words[2..]
+                    .iter()
+                    .map(|word| {
+                        word.parse::<usize>()
+                            .expect("could not parse db integer to rust integer")
+                    })
+                    .collect();
+                dbg!(&nums);
+                match mode {
+                    "CAT" => {
+                        let mut stmt =
+                            conn.prepare(&format!("DELETE FROM {TABLE_CAT} WHERE id = (?1)"))?;
+                        for n in nums {
+                            stmt.execute([n])?;
+                        }
+                    }
+                    "COLOR" => {
+                        // TODO: we need to delete cats that have this color too, or abort if such cats exist, or give
+                        // the user the option to choose!
+                        todo!();
+                        let mut stmt = conn
+                            .prepare(&format!("DELETE FROM {TABLE_CAT_COLOR} WHERE id = (?1)"))?;
+                        let _ = nums.iter().map(|n| stmt.execute([n]));
+                    }
+                    _ => {
+                        println!("{USAGE_DELETE}");
+                    }
+                }
             }
-            "F" => {
-                interactive_find_cat(&conn)?;
-            }
-            "P" => {
-                print_all_data(&conn)?;
-            }
-            "E" => {
-                println!("Goodbye");
-                break;
-            }
-            _ => (),
+        } else if buf.starts_with("E") {
+            println!("Goodbye");
+            break;
         }
         println!("\n(Enter to continue)");
         let _ = stdin.lock().read_line(&mut buf); // wait for enter as confirmation
