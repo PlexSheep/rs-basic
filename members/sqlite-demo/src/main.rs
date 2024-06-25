@@ -8,7 +8,7 @@ use anyhow::Ok;
 ///
 /// A very useful ressource is the
 /// [rust-cookbook](https://rust-lang-nursery.github.io/rust-cookbook/database/sqlite.html).
-use rusqlite::Connection;
+use rusqlite::{Connection, Rows};
 
 const DBNAME: &str = "cats.db";
 const TABLE_CAT_COLOR: &str = "cat_colors";
@@ -145,12 +145,22 @@ fn get_color_id(conn: &Connection, color: &str) -> anyhow::Result<usize> {
     )?)
 }
 
-fn get_color_by_id(conn: &Connection, id: usize) -> anyhow::Result<String> {
-    Ok(conn.query_row(
+fn get_color_by_id(conn: &Connection, id: usize) -> anyhow::Result<Option<String>> {
+    let maybe = conn.query_row(
         &format!("SELECT name FROM {TABLE_CAT_COLOR} WHERE id = (?1)"),
         [id.to_string()],
         |row| row.get::<usize, String>(0),
-    )?)
+    );
+    if let Result::Ok(color) = maybe {
+        Ok(Some(color))
+    } else {
+        let err: rusqlite::Error = maybe.unwrap_err();
+        if matches!(err, rusqlite::Error::QueryReturnedNoRows) {
+            Ok(None)
+        } else {
+            Err(err.into())
+        }
+    }
 }
 
 fn new_cat(conn: &Connection, name: &str, color_id: usize) -> anyhow::Result<usize> {
@@ -177,52 +187,64 @@ fn interactive_add_cat(conn: &Connection) -> anyhow::Result<usize> {
     let mut cat_name: String = String::new();
     let _ = stdin.read_line(&mut cat_name)?;
     cat_name = cat_name.trim().to_string();
-    dbg!(&cat_name);
 
     print!("the color of your cat?\n> ");
     io::stdout().flush()?;
     let mut cat_color: String = String::new();
     let _ = stdin.read_line(&mut cat_color)?;
     cat_color = cat_color.trim().to_string();
-    dbg!(&cat_color);
     new_color(conn, &cat_color)?;
 
     let cat_id = new_cat(conn, &cat_name, get_color_id(conn, &cat_color)?)?;
     assert!(check_if_cat_exists(conn, cat_id)?);
     println!("your cat has id {cat_id}");
-    println!("your cat has color '{}'", get_color_by_id(conn, cat_id)?);
+    // FIXME: some sql error here: `Error: Query returned no rows`
+    println!("your cat has color '{}'", get_cat_color(conn, cat_id)?);
 
     Ok(cat_id)
+}
+
+fn print_colors(_conn: &Connection, colors: &mut Rows) -> anyhow::Result<()> {
+    println!("{: <14}| {: <19}", "id", "name");
+    println!("{:=^80}", "");
+    while let Some(color) = colors.next()? {
+        println!(
+            "{:<14}| {: <19}",
+            color.get::<_, usize>(0)?,
+            color.get::<_, String>(1)?
+        )
+    }
+    Ok(())
+}
+
+fn print_cats(conn: &Connection, cats: &mut Rows) -> anyhow::Result<()> {
+    println!(
+        "{: <14}| {: <19}| {: <19} -> {: <19}",
+        "id", "name", "color id", "color name"
+    );
+    println!("{:=^80}", "");
+    while let Some(cat) = cats.next()? {
+        println!(
+            "{: <14}| {: <19}| {: <19} -> {: <19}",
+            cat.get::<_, usize>(0)?,
+            cat.get::<_, String>(1)?,
+            cat.get::<_, usize>(2)?,
+            get_color_by_id(conn, cat.get::<_, usize>(2)?)?.expect("no color for this id"),
+        )
+    }
+    Ok(())
 }
 
 fn print_all_data(conn: &Connection) -> anyhow::Result<()> {
     println!("Cat colors:");
     let mut stmt = conn.prepare(&format!("SELECT * FROM {TABLE_CAT_COLOR}"))?;
     let mut colors = stmt.query([])?;
-    println!("id\t| name");
-    println!("{:=^60}", "");
-    while let Some(color) = colors.next()? {
-        println!(
-            "{}\t| {}",
-            color.get::<_, usize>(0)?,
-            color.get::<_, String>(1)?
-        )
-    }
+    print_colors(conn, &mut colors)?;
 
     println!("\n\nCats:");
     let mut stmt = conn.prepare(&format!("SELECT * FROM {TABLE_CAT}"))?;
-    let mut colors = stmt.query([])?;
-    println!("id\t| name\t\t| color_id\t -> \tcolor");
-    println!("{:=^60}", "");
-    while let Some(color) = colors.next()? {
-        println!(
-            "{}\t| {}\t\t| {}\t\t -> \t{}",
-            color.get::<_, usize>(0)?,
-            color.get::<_, String>(1)?,
-            color.get::<_, usize>(2)?,
-            get_color_by_id(conn, color.get::<_, usize>(2)?)?,
-        )
-    }
+    let mut cats = stmt.query([])?;
+    print_cats(conn, &mut cats)?;
 
     Ok(())
 }
@@ -245,7 +267,7 @@ fn main() -> anyhow::Result<()> {
                 interactive_add_cat(&conn)?;
             }
             "F" => {
-                todo!()
+                println!("currently not implemented");
             }
             "P" => {
                 print_all_data(&conn)?;
