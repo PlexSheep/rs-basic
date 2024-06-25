@@ -4,3 +4,4 @@ members/c-bindings/lib/cmake_install.cmake
 members/c-bindings/lib/libtest.so
 members/c-bindings/lib/libtest.so.1
 members/c-bindings/lib/libtest.so.1.0.1
+members/sqlite-demo/data/cats.db
