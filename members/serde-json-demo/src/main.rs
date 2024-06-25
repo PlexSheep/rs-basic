@@ -24,7 +24,7 @@ enum Color {
     Green,
     Yellow,
     Red,
-    Custom(String)
+    Custom(String),
 }
 
 use serde_repr::{Deserialize_repr, Serialize_repr};
