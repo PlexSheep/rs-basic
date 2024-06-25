@@ -128,11 +128,9 @@ impl FromStr for Token {
 }
 
 mod test {
-    use super::*;
-    use crate::Client;
     #[test]
     fn test_new_dbg() {
-        let c = Client::new_debug();
+        let c = super::Client::new_debug();
         assert_eq!(c.token.to_string(), "mytok");
         assert_eq!(c.id.to_string(), "myid");
     }
