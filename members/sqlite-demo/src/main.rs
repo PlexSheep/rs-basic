@@ -294,13 +294,13 @@ fn main() -> anyhow::Result<()> {
         let _ = stdin.lock().read_line(&mut buf);
         buf = buf.trim().to_string();
         buf = buf.to_uppercase().to_string();
-        if buf.starts_with("A") {
+        if buf.starts_with('A') {
             interactive_add_cat(&conn)?;
-        } else if buf.starts_with("F") {
+        } else if buf.starts_with('F') {
             interactive_find_cat(&conn)?;
-        } else if buf.starts_with("P") {
+        } else if buf.starts_with('P') {
             print_all_data(&conn)?;
-        } else if buf.starts_with("D") {
+        } else if buf.starts_with('D') {
             let words: Vec<&str> = buf.split(' ').collect();
             dbg!(&words);
             if words.len() < 2 {
@@ -336,7 +336,7 @@ fn main() -> anyhow::Result<()> {
                     }
                 }
             }
-        } else if buf.starts_with("E") {
+        } else if buf.starts_with('E') {
             println!("Goodbye");
             break;
         }
