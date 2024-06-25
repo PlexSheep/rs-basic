@@ -224,7 +224,7 @@ fn interactive_find_cat(conn: &Connection) -> anyhow::Result<()> {
         AND (c.name LIKE (?1) OR cc.name LIKE (?2))"
     ))?;
 
-    let mut fitting_cats = stmt.query([cat_name,cat_color])?;
+    let mut fitting_cats = stmt.query([cat_name, cat_color])?;
     println!("These cats might fit your description:\n");
     print_cats(conn, &mut fitting_cats)?;
 
