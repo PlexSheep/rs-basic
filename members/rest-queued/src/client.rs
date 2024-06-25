@@ -70,6 +70,8 @@ impl Id {
         }
     }
 
+    #[must_use]
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.inner.len()
     }
@@ -107,6 +109,8 @@ impl Token {
         }
     }
 
+    #[must_use]
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.inner.len()
     }
