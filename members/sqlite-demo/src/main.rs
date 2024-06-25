@@ -130,7 +130,7 @@ fn check_if_cat_exists(conn: &Connection, id: usize) -> anyhow::Result<bool> {
 /// Returns the id of the color
 fn new_color(conn: &Connection, color: &str) -> anyhow::Result<usize> {
     if check_if_color_exists(conn, color)? {
-        return Ok(get_color_id(conn, color)?);
+        return get_color_id(conn, color);
     }
 
     conn.execute(
@@ -138,7 +138,7 @@ fn new_color(conn: &Connection, color: &str) -> anyhow::Result<usize> {
         [color.to_string()],
     )?;
 
-    Ok(get_color_id(conn, color)?)
+    get_color_id(conn, color)
 }
 
 fn get_color_id(conn: &Connection, color: &str) -> anyhow::Result<usize> {
