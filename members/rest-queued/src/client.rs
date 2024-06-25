@@ -129,6 +129,7 @@ impl FromStr for Token {
 
 mod test {
     use super::*;
+    use crate::Client;
     #[test]
     fn test_new_dbg() {
         let c = Client::new_debug();
