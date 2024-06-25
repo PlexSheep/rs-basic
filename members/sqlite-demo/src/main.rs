@@ -195,6 +195,38 @@ fn interactive_add_cat(conn: &Connection) -> anyhow::Result<usize> {
     Ok(cat_id)
 }
 
+fn print_all_data(conn: &Connection) -> anyhow::Result<()> {
+    println!("Cat colors:");
+    let mut stmt = conn.prepare(&format!("SELECT * FROM {TABLE_CAT_COLOR}"))?;
+    let mut colors = stmt.query([])?;
+    println!("id\t| name");
+    println!("{:=^60}", "");
+    while let Some(color) = colors.next()? {
+        println!(
+            "{}\t| {}",
+            color.get::<_, usize>(0)?,
+            color.get::<_, String>(1)?
+        )
+    }
+
+    println!("\n\nCats:");
+    let mut stmt = conn.prepare(&format!("SELECT * FROM {TABLE_CAT}"))?;
+    let mut colors = stmt.query([])?;
+    println!("id\t| name\t\t| color_id\t -> \tcolor");
+    println!("{:=^60}", "");
+    while let Some(color) = colors.next()? {
+        println!(
+            "{}\t| {}\t\t| {}\t\t -> \t{}",
+            color.get::<_, usize>(0)?,
+            color.get::<_, String>(1)?,
+            color.get::<_, usize>(2)?,
+            get_color_by_id(conn, color.get::<_, usize>(2)?)?,
+        )
+    }
+
+    Ok(())
+}
+
 fn main() -> anyhow::Result<()> {
     let conn = connect()?;
 
@@ -204,7 +236,7 @@ fn main() -> anyhow::Result<()> {
     let mut buf: String = String::new();
 
     loop {
-        print!("(A)dd a cat, (F)ind a cat or (E)xit?\n> ");
+        print!("(A)dd a cat, (F)ind a cat, (P)rint out all data, or (E)xit?\n> ");
         io::stdout().flush()?;
         let _ = stdin.lock().read_line(&mut buf);
         buf = buf.trim().to_string();
@@ -215,6 +247,9 @@ fn main() -> anyhow::Result<()> {
             "F" => {
                 todo!()
             }
+            "P" => {
+                print_all_data(&conn)?;
+            }
             "E" => {
                 println!("Goodbye");
                 break;
@@ -222,6 +257,7 @@ fn main() -> anyhow::Result<()> {
             _ => (),
         }
         buf.clear();
+        println!();
     }
 
     Ok(())
