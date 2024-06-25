@@ -198,10 +198,37 @@ fn interactive_add_cat(conn: &Connection) -> anyhow::Result<usize> {
     let cat_id = new_cat(conn, &cat_name, get_color_id(conn, &cat_color)?)?;
     assert!(check_if_cat_exists(conn, cat_id)?);
     println!("your cat has id {cat_id}");
-    // FIXME: some sql error here: `Error: Query returned no rows`
     println!("your cat has color '{}'", get_cat_color(conn, cat_id)?);
 
     Ok(cat_id)
+}
+
+fn interactive_find_cat(conn: &Connection) -> anyhow::Result<()> {
+    let stdin = io::stdin();
+    print!("the name of your cat?\n> ");
+    io::stdout().flush()?;
+    let mut cat_name: String = String::new();
+    let _ = stdin.read_line(&mut cat_name)?;
+    cat_name = cat_name.trim().to_string();
+
+    print!("the color of your cat?\n> ");
+    io::stdout().flush()?;
+    let mut cat_color: String = String::new();
+    let _ = stdin.read_line(&mut cat_color)?;
+    cat_color = cat_color.trim().to_string();
+    new_color(conn, &cat_color)?;
+
+    let mut stmt = conn.prepare(&format!(
+        "SELECT * FROM {TABLE_CAT} c, {TABLE_CAT_COLOR} cc
+        WHERE c.color_id = cc.id
+        AND (c.name LIKE (?1) OR cc.name LIKE (?2))"
+    ))?;
+
+    let mut fitting_cats = stmt.query([cat_name,cat_color])?;
+    println!("These cats might fit your description:\n");
+    print_cats(conn, &mut fitting_cats)?;
+
+    Ok(())
 }
 
 fn print_colors(_conn: &Connection, colors: &mut Rows) -> anyhow::Result<()> {
@@ -262,12 +289,13 @@ fn main() -> anyhow::Result<()> {
         io::stdout().flush()?;
         let _ = stdin.lock().read_line(&mut buf);
         buf = buf.trim().to_string();
+        buf = buf.to_uppercase().to_string();
         match buf.as_str() {
             "A" => {
                 interactive_add_cat(&conn)?;
             }
             "F" => {
-                println!("currently not implemented");
+                interactive_find_cat(&conn)?;
             }
             "P" => {
                 print_all_data(&conn)?;
@@ -278,8 +306,11 @@ fn main() -> anyhow::Result<()> {
             }
             _ => (),
         }
+        println!("\n(Enter to continue)");
+        let _ = stdin.lock().read_line(&mut buf); // wait for enter as confirmation
         buf.clear();
-        println!();
+        print!("{}[2J", 27 as char); // clear terminal
+        io::stdout().flush()?;
     }
 
     Ok(())
