@@ -49,7 +49,6 @@ default-members = [
   "members/rest-queued",
   "members/sqlite-demo",
 ]
-publish = false
 
 [workspace.dependencies]
 anyhow = "1.0.79"
