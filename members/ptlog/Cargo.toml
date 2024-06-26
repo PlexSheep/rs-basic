@@ -1,0 +1,8 @@
+[package]
+name = "ptlog"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libpt.workspace = true
+anyhow.workspace = true
