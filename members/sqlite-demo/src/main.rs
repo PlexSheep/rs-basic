@@ -33,8 +33,8 @@ fn interactive_add_cat(conn: &Connection) -> anyhow::Result<usize> {
 
     let cat_id = new_cat(conn, &cat_name, get_color_id(conn, &cat_color)?)?;
     assert!(check_if_cat_exists(conn, cat_id)?);
-    println!("your cat has id {cat_id}");
-    println!("your cat has color '{}'", get_cat_color(conn, cat_id)?);
+    println!("\n-> your cat has id {cat_id}");
+    println!("-> your cat has color '{}'", get_cat_color(conn, cat_id)?);
 
     Ok(cat_id)
 }
@@ -60,7 +60,7 @@ fn interactive_find_cat(conn: &Connection) -> anyhow::Result<()> {
     ))?;
 
     let mut fitting_cats = stmt.query([cat_name, cat_color])?;
-    println!("These cats might fit your description:\n");
+    println!("\nThese cats might fit your description:\n");
     print_cats(conn, &mut fitting_cats)?;
 
     Ok(())
@@ -88,6 +88,7 @@ fn interactive_delete(conn: &Connection, buf: &mut String) -> anyhow::Result<()>
                 let mut stmt = conn.prepare(&format!("DELETE FROM {TABLE_CAT} WHERE id = (?1)"))?;
                 for n in nums {
                     stmt.execute([n])?;
+                    println!("deleted cat with id {n}");
                 }
             }
             "COLOR" => {
@@ -116,38 +117,26 @@ fn interactive_delete(conn: &Connection, buf: &mut String) -> anyhow::Result<()>
                             as they have the color id {color_id}. Type 'YES' to confirm."
                         );
                         print_cats(conn, &mut cats)?;
-                        drop(cats); // we need to renew this, because Rows is not Clone and we have
-                                    // consumed the Rows in print_cats. The Rows index can not be reset,
-                                    // probably because of a sqlite API limitation.
 
-                        let mut cats = stmt_cats_with_color.query([color_id])?;
-                        let mut cat_ids: Vec<usize> = Vec::new();
-
-                        while let Some(cat) = cats.next()? {
-                            cat_ids.push(cat.get::<_, usize>(0)?);
-                        }
                         buf.clear();
                         let _ = stdin.lock().read_line(buf); // wait for enter as confirmation
                         *buf = buf.trim().to_string();
                         *buf = buf.to_uppercase().to_string();
-                        dbg!(&buf);
                         if buf.as_str() != "YES" {
                             continue;
                         }
+                        println!();
                         let mut stmt =
-                            conn.prepare(&format!("DELETE FROM {TABLE_CAT} WHERE id = (?1)"))?;
-                        for cat_id in cat_ids {
-                            stmt.execute([cat_id])?;
-                        }
+                            conn.prepare(&format!("DELETE FROM {TABLE_CAT} WHERE color_id = (?1)"))?;
+                            stmt.execute([color_id])?;
+                            println!("-> deleted cats with color_id {color_id}");
                     }
 
                     let mut stmt =
                         conn.prepare(&format!("DELETE FROM {TABLE_CAT_COLOR} WHERE id = (?1)"))?;
-                    for n in &nums {
-                        stmt.execute([n])?;
-                    }
+                    stmt.execute([color_id])?;
+                    println!("-> deleted color with id {color_id}");
                 }
-                println!("deleted ids {nums:?}");
             }
             _ => {
                 println!("{USAGE_DELETE}");
