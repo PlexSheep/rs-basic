@@ -6,7 +6,6 @@ pub const DBNAME: &str = "cats.db";
 pub const TABLE_CAT_COLOR: &str = "cat_colors";
 pub const TABLE_CAT: &str = "cats";
 
-
 pub fn connect() -> anyhow::Result<Connection> {
     let mut wd = env::current_dir()?;
     let mut dbpath: Option<PathBuf> = None;
