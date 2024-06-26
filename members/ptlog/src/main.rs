@@ -13,6 +13,6 @@ fn main() -> anyhow::Result<()> {
     debug!("logger: {logger:#?}");
     trace!("Type id of libpt::log::Logger is '{:#?}'", logger.type_id());
     let u = 19;
-    error!(some_value=u, "No error, this is just a test");
+    error!(some_value = u, "No error, this is just a test");
     Ok(())
 }
