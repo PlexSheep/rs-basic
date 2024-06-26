@@ -23,9 +23,11 @@ members = [
   "members/fluent-demo",
   "members/onlytoken",
   "members/sqlite-demo",
+  "members/diesel-demo",
 ]
 default-members = [
   ".",
+  "members/diesel-demo",
   "members/onlytoken",
   "members/fluent-demo",
   "members/echargs",
@@ -65,7 +67,7 @@ tokio = { version = "1.35.1", features = [
 futures = { version = "0.3.30", features = ["executor"] }
 serde = { version = "1.0.171", features = ["derive"] }
 serde_json = "1.0.102"
-libpt = { version = "0.4.2", features = ["full"] }
+libpt = { version = "0.5.1", features = ["full"] }
 
 [package]
 name = "rs-basic"
