@@ -126,10 +126,10 @@ fn interactive_delete(conn: &Connection, buf: &mut String) -> anyhow::Result<()>
                             continue;
                         }
                         println!();
-                        let mut stmt =
-                            conn.prepare(&format!("DELETE FROM {TABLE_CAT} WHERE color_id = (?1)"))?;
-                            stmt.execute([color_id])?;
-                            println!("-> deleted cats with color_id {color_id}");
+                        let mut stmt = conn
+                            .prepare(&format!("DELETE FROM {TABLE_CAT} WHERE color_id = (?1)"))?;
+                        stmt.execute([color_id])?;
+                        println!("-> deleted cats with color_id {color_id}");
                     }
 
                     let mut stmt =
