@@ -1,20 +1,17 @@
+pub mod cli;
 pub mod models;
 pub mod schema;
-pub mod cli;
 
 use self::schema::posts::dsl::*;
 
-use std::io::Write;
-use std::{env, io};
+use std::env;
 
-use colored::Colorize;
-use dialoguer::Input;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
 use dotenvy::dotenv;
 
-use libpt::log::{error, info, warn};
+use libpt::log::error;
 
 pub fn establish_connection() -> anyhow::Result<SqliteConnection> {
     dotenv()?;
@@ -35,4 +32,3 @@ pub fn load_relevant_posts(conn: &mut SqliteConnection) -> anyhow::Result<Vec<mo
         .select(models::Post::as_select())
         .load(conn)?)
 }
-

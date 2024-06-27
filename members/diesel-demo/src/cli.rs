@@ -3,9 +3,8 @@ use std::fmt::Display;
 use comfy_table::presets::UTF8_FULL_CONDENSED;
 use comfy_table::Table;
 use console::{style, Color};
+use dialoguer::BasicHistory;
 use dialoguer::{theme::ColorfulTheme, Completion, Input};
-use dialoguer::{BasicHistory, History};
-use libpt::log::{info, warn};
 
 use crate::models::{self, Post};
 
@@ -123,6 +122,6 @@ pub(crate) fn borderprint(content: impl ToString, color: Option<Color>) {
         .add_row(vec![content.to_string()]);
     match color {
         Some(c) => println!("{}", style(table).fg(c)),
-        None => println!("{table}")
+        None => println!("{table}"),
     }
 }
