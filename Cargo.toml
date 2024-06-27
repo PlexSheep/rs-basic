@@ -25,9 +25,11 @@ members = [
   "members/diesel-demo",
   "members/ptlog",
   "members/hello-world",
+  "members/statusline",
 ]
 default-members = [
   ".",
+  "members/statusline",
   "members/ptlog",
   "members/diesel-demo",
   "members/onlytoken",
