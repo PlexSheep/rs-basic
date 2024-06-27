@@ -1,6 +1,6 @@
 use diesel::SqliteConnection;
 use diesel_demo::models::PostDraft;
-use libpt::log::{self, debug, error, info, trace, warn};
+use libpt::log::{self, debug, error, trace};
 
 use diesel_demo as lib;
 
