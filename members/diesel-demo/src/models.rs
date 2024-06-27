@@ -2,7 +2,7 @@ use std::fmt::Display;
 use std::io::{self, Read, Write};
 
 use diesel::prelude::*;
-use libpt::log::{info, trace, warn};
+use libpt::log::{info, trace};
 
 use crate::schema::posts;
 
