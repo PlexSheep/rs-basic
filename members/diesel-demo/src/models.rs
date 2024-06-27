@@ -2,7 +2,7 @@ use std::fmt::Display;
 use std::io::{self, Read, Write};
 
 use diesel::prelude::*;
-use libpt::log::{info, trace};
+use libpt::log::{info, trace, warn};
 
 use crate::schema::posts;
 
@@ -52,11 +52,15 @@ impl Post {
 
 impl Display for Post {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(
-            f,
-            "\n{:<60} | published: {:<5}\n{:=^140}\n\n{}",
-            self.title, self.published, "", self.body
-        )
+        if !self.published {
+            writeln!(f, "this post has not yet been published!")
+        } else {
+            writeln!(
+                f,
+                "\n{:<60} | published: {:<5}\n{:=^140}\n\n{}",
+                self.title, self.published, "", self.body
+            )
+        }
     }
 }
 
