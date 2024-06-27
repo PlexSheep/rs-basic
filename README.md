@@ -7,6 +7,8 @@ dependencies.
 
 Completeness is not a goal of this project.
 
+## Highlighted demo crates
+
 **Basics**
 * [echargs](./members/echargs/)
 * [shortc](./members/shortc/)
@@ -20,21 +22,21 @@ Completeness is not a goal of this project.
 * [socker](./members/socker/)
 
 **Dependencies**
-* [serde-json-demo](./members/serde-json-demo/)
-* [claptest](./members/claptest/)
-* [ptlog](./members/ptlog/)
-* [slog-demo](./members/slog-demo/)
-* [sqlite-demo](./members/sqlite-demo/)
+* [serde-json-demo](./members/serde-json-demo/) (for `serde` and `serde_json`)
+* [claptest](./members/claptest/) (for `clap`)
+* [ptlog](./members/ptlog/) (for `libpt`)
+* [sqlite-demo](./members/sqlite-demo/) (for `rusqlite`)
+* [onlytoken](./members/onlytoken/) (for `rand` and `argon2`)
 
 **Advanced Dependencies**
-* [diesel-demo](./members/diesel-demo/)
-* [tokio-send-sync](./members/tokio-send-sync/)
-* [tokryon](./members/tokryon/)
-* [cucumber-demo](./members/cucumber-demo/)
-* [criterion-demo](./members/criterion-demo/)
-* [revsqrt](./members/revsqrt/) (the bench and tests)
-* [rest](./members/rest/)
-* [rest-queued](./members/rest-queued/)
+* [diesel-demo](./members/diesel-demo/) (for `diesel`)
+* [tokio-send-sync](./members/tokio-send-sync/) (for `tokio`)
+* [tokryon](./members/tokryon/) (for `tokio` and `rayon`)
+* [cucumber-demo](./members/cucumber-demo/) (for `cucumber`)
+* [criterion-demo](./members/criterion-demo/) (for `criterion`)
+* [revsqrt](./members/revsqrt/) (the bench and tests, for `criterion` and `cucumber`)
+* [rest](./members/rest/) (for `serde`, `tokio` and `warp`)
+* [rest-queued](./members/rest-queued/) (for `serde`, `tokio` and `warp`)
 
 ## Rust unsafe
 
