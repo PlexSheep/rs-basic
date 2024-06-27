@@ -8,7 +8,6 @@ members = [
   "members/revsqrt",
   "members/serde-json-demo",
   "members/shortc",
-  "members/slog-demo",
   "members/socker",
   "members/tokryon",
   "members/tokio-send-sync",
@@ -24,7 +23,8 @@ members = [
   "members/onlytoken",
   "members/sqlite-demo",
   "members/diesel-demo",
-  "members/ptlog", "members/hello-world",
+  "members/ptlog",
+  "members/hello-world",
 ]
 default-members = [
   ".",
@@ -41,7 +41,6 @@ default-members = [
   "members/shortc",
   "members/pest-demo",
   "members/serde-json-demo",
-  "members/slog-demo",
   "members/cucumber-demo",
   "members/panic-calm",
   "members/socker",
