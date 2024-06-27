@@ -1,6 +1,8 @@
 pub mod models;
 pub mod schema;
 
+use self::schema::posts::dsl::*;
+
 use std::io::Write;
 use std::{env, io};
 
@@ -11,9 +13,6 @@ use dotenvy::dotenv;
 
 use libpt::log::{error, info, warn};
 
-use self::models::*;
-use self::schema::posts::dsl::*;
-
 pub fn establish_connection() -> anyhow::Result<SqliteConnection> {
     dotenv()?;
 
@@ -22,21 +21,41 @@ pub fn establish_connection() -> anyhow::Result<SqliteConnection> {
         .inspect_err(|e| error!("Error connecting to {}:\n{e:#?}", database_url))?)
 }
 
-pub fn load_posts(conn: &mut SqliteConnection) -> anyhow::Result<Vec<models::Post>> {
+pub fn load_all_posts(conn: &mut SqliteConnection) -> anyhow::Result<Vec<models::Post>> {
+    Ok(posts.select(models::Post::as_select()).load(conn)?)
+}
+
+pub fn load_relevant_posts(conn: &mut SqliteConnection) -> anyhow::Result<Vec<models::Post>> {
     Ok(posts
-        .filter(published.eq(true))
+        .filter(schema::posts::published.eq(true))
         .limit(5)
-        .select(Post::as_select())
+        .select(models::Post::as_select())
         .load(conn)?)
 }
 
-pub fn print_posts(posts_to_print: &Vec<Post>) {
+// NOTE: formatting breaks when you use japanese fullwidth (or probably other longer chars too)
+// characters. Works well for the regular alphabet
+pub fn print_posts(posts_to_print: &Vec<models::Post>) {
     if !posts_to_print.is_empty() {
-        info!("Displaying {} posts", posts_to_print.len());
+        info!("{} posts are in the database", posts_to_print.len());
+        println!(
+            "{: <12}| {: <30} | {: <40}[...] | {: <12} | {: <5}",
+            "id", "title", "body (truncated)", "body len", "is published?"
+        );
+        println!("{:=^140}", "");
         for post in posts_to_print {
-            println!("{}", post.title);
-            println!("-----------\n");
-            println!("{}", post.body);
+            let mut short_title = post.body.clone();
+            short_title.truncate(30);
+            let mut short_body = post.body.clone();
+            short_body.truncate(40);
+            println!(
+                "{: <12}| {: <30} | {: <40}[...] | {: <12} | {: <5}",
+                post.id,
+                short_title,
+                short_body,
+                post.body.len(),
+                post.published
+            );
         }
     } else {
         warn!("Tried to display posts, but there are no posts stored in the database");

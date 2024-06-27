@@ -6,7 +6,7 @@ use diesel_demo as lib;
 
 fn main() -> anyhow::Result<()> {
     let _logger = log::Logger::builder()
-        .max_level(log::Level::TRACE)
+        .max_level(log::Level::DEBUG)
         .show_time(false)
         .build();
     debug!("logger initialized");
@@ -38,7 +38,8 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
         } else if buf.starts_with("EXIT") {
             break;
         } else if buf.starts_with("LIST") {
-            let posts = lib::load_posts(conn)?;
+            let posts = lib::load_all_posts(conn)?;
+            trace!("loaded posts for display: {posts:#?}");
             lib::print_posts(&posts);
         } else if buf.starts_with("NEW") {
             let post = PostDraft::interactive_create()?;
