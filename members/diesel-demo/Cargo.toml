@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow.workspace = true
-diesel = { version = "2.2.1", features = ["serde_json", "sqlite", "uuid"] }
+diesel = { version = "2.2.1", features = ["serde_json", "sqlite", "uuid", "returning_clauses_for_sqlite_3_35"] }
 dotenvy = "0.15.7"
 libpt.workspace = true
 serde = { workspace = true, features = ["serde_derive"] }

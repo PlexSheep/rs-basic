@@ -1,16 +1,53 @@
-use libpt::log::{self, debug};
+use diesel::SqliteConnection;
+use diesel_demo::models::PostDraft;
+use libpt::log::{self, debug, info, trace, warn};
 
 use diesel_demo as lib;
 
 fn main() -> anyhow::Result<()> {
     let _logger = log::Logger::builder()
         .max_level(log::Level::TRACE)
-        .uptime(true)
+        .show_time(false)
         .build();
     debug!("logger initialized");
 
-    let conn = lib::establish_connection()?;
+    let mut conn = lib::establish_connection()?;
     debug!("db connection established");
+
+    let posts = lib::load_posts(&mut conn)?;
+
+    lib::print_posts(&posts);
+
+    trace!("entering the repl");
+    repl(&mut conn)?;
+    trace!("leaving the repl");
+
+    Ok(())
+}
+
+fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
+    let mut buf = String::new();
+
+    loop {
+        lib::read_buf_interactive(&mut buf)?;
+        buf = buf.to_uppercase();
+        if buf.starts_with("HELP") {
+            println!("\
+                help                -     show this menu\n\
+                exit                -     exit the application\n\
+                new                 -     create a new post")
+        }
+        else if buf.starts_with("EXIT") {
+            break;
+        }
+        else if buf.starts_with("NEW") {
+            let post = PostDraft::interactive_create()?;
+            post.post(conn)?;
+        }
+        else {
+            println!("Bad input: try 'help'");
+        }
+    }
 
     Ok(())
 }
