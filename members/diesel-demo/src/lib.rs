@@ -13,7 +13,6 @@ use libpt::log::{error, info, warn};
 
 use self::models::*;
 use self::schema::posts::dsl::*;
-use diesel::prelude::*;
 
 pub fn establish_connection() -> anyhow::Result<SqliteConnection> {
     dotenv()?;

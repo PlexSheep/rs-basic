@@ -1,6 +1,6 @@
 use diesel::SqliteConnection;
 use diesel_demo::models::PostDraft;
-use libpt::log::{self, debug, info, trace, warn};
+use libpt::log::{self, debug, trace};
 
 use diesel_demo as lib;
 
@@ -32,19 +32,18 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
         lib::read_buf_interactive(&mut buf)?;
         buf = buf.to_uppercase();
         if buf.starts_with("HELP") {
-            println!("\
+            println!(
+                "\
                 help                -     show this menu\n\
                 exit                -     exit the application\n\
-                new                 -     create a new post")
-        }
-        else if buf.starts_with("EXIT") {
+                new                 -     create a new post"
+            )
+        } else if buf.starts_with("EXIT") {
             break;
-        }
-        else if buf.starts_with("NEW") {
+        } else if buf.starts_with("NEW") {
             let post = PostDraft::interactive_create()?;
             post.post(conn)?;
-        }
-        else {
+        } else {
             println!("Bad input: try 'help'");
         }
     }
