@@ -1,6 +1,6 @@
 use diesel::SqliteConnection;
 use diesel_demo::models::{Post, PostDraft};
-use libpt::log::{self, debug, error, trace};
+use libpt::log::{self, debug, error, trace, warn};
 
 use diesel_demo as lib;
 
@@ -44,7 +44,13 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
                 Some(i) => i,
                 None => continue,
             };
-            Post::publish(conn, id)?;
+            if let Err(e) = Post::publish(conn, id){
+                if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
+                    if matches!(e, diesel::result::Error::NotFound) {
+                        warn!("No post with id {id} exists");
+                    }
+                }
+            };
         } else if buf.starts_with("DELETE") {
             let id: i32 = match get_id(&buf) {
                 Some(i) => i,
