@@ -24,7 +24,7 @@ members = [
   "members/onlytoken",
   "members/sqlite-demo",
   "members/diesel-demo",
-  "members/ptlog",
+  "members/ptlog", "members/hello-world",
 ]
 default-members = [
   ".",
