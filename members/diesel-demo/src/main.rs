@@ -56,6 +56,13 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
                 Some(i) => i,
                 None => continue,
             };
+            if let Err(e) = Post::delete(conn, id){
+                if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
+                    if matches!(e, diesel::result::Error::NotFound) {
+                        warn!("No post with id {id} exists");
+                    }
+                }
+            };
         } else if buf.starts_with("LIST") {
             let posts = lib::load_all_posts(conn)?;
             trace!("loaded posts for display: {posts:#?}");

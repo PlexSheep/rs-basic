@@ -32,6 +32,15 @@ impl Post {
         info!("updated post {}", post.id);
         Ok(())
     }
+    pub fn delete(conn: &mut SqliteConnection, id: i32) -> anyhow::Result<()> {
+        use crate::schema::posts::dsl::{posts, published};
+
+        let post = diesel::delete(posts.find(id))
+            .returning(Post::as_returning())
+            .get_result(conn)?;
+        info!("deleted post {}", post.id);
+        Ok(())
+    }
 }
 
 #[derive(Insertable, Debug)]
