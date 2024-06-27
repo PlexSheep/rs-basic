@@ -1,6 +1,7 @@
 use std::fmt::Display;
 use std::io::{self, Read, Write};
 
+use dialoguer::Confirm;
 use diesel::prelude::*;
 use libpt::log::{info, trace};
 
@@ -40,6 +41,13 @@ impl Post {
         Ok(())
     }
     pub fn delete(conn: &mut SqliteConnection, id: i32) -> anyhow::Result<()> {
+        let confirmation = Confirm::new()
+            .with_prompt(format!("You are about to delete post {id}, continue?"))
+            .interact()?;
+        if !confirmation {
+            return Ok(());
+        }
+
         use crate::schema::posts::dsl::posts;
 
         let post = diesel::delete(posts.find(id))
@@ -47,20 +55,6 @@ impl Post {
             .get_result(conn)?;
         info!("deleted post {}", post.id);
         Ok(())
-    }
-}
-
-impl Display for Post {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if !self.published {
-            writeln!(f, "this post has not yet been published!")
-        } else {
-            writeln!(
-                f,
-                "\n{:<60} | published: {:<5}\n{:=^140}\n\n{}",
-                self.title, self.published, "", self.body
-            )
-        }
     }
 }
 

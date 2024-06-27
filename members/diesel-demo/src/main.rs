@@ -1,19 +1,9 @@
+use dialoguer::BasicHistory;
 use diesel::SqliteConnection;
 use diesel_demo::models::{Post, PostDraft};
 use libpt::log::{self, debug, error, trace, warn};
 
-const HELP_TEXT: &str = "\
-                help|?              -     show this menu\n\
-                exit                -     exit the application\n\
-                list                -     list all posts\n\
-                publish [id]        -     publish the post with the id [id]\n\
-                unpublish [id]      -     make the post with the id [id] a draft\n\
-                delete [id]         -     delete the post with the id [id]\n\
-                read|show [id]      -     display the post with the id [id]\n\
-                new                 -     create a new post";
-const USAGE_TEXT: &str = "Bad input: try 'help'";
-
-use colored::*;
+use lib::cli::*;
 
 use diesel_demo as lib;
 
@@ -37,12 +27,14 @@ fn main() -> anyhow::Result<()> {
 
 fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
     let mut buf = String::new();
+    let completion = MyCompletion::default();
+    let mut history = BasicHistory::new();
 
     loop {
-        lib::read_buf_interactive(&mut buf)?;
+        read_buf_interactive(&mut buf, &completion, &mut history)?;
         buf = buf.to_uppercase();
         if buf.starts_with("HELP") || buf.starts_with('?') {
-            println!("{}", HELP_TEXT.bright_blue())
+            help()
         } else if buf.starts_with("EXIT") || buf.is_empty() {
             break;
         } else if buf.starts_with("UNPUBLISH") {
@@ -101,10 +93,10 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
                     }
                 }
             };
-        } else if buf.starts_with("LIST") {
+        } else if buf.starts_with("LIST") || buf.starts_with("LS") {
             let posts = lib::load_all_posts(conn)?;
             trace!("loaded posts for display: {posts:#?}");
-            lib::print_posts(&posts);
+            table_posts(&posts);
         } else if buf.starts_with("NEW") {
             let post = PostDraft::interactive_create()?;
             let _ = post.post(conn).inspect_err(|e| {
@@ -116,10 +108,6 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
     }
 
     Ok(())
-}
-
-fn usage() {
-    println!("{}", USAGE_TEXT.red().bold());
 }
 
 fn get_id(buf: &str) -> Option<i32> {

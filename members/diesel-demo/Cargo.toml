@@ -6,8 +6,12 @@ edition = "2021"
 [dependencies]
 anyhow.workspace = true
 colored = "2.1.0"
+comfy-table = { version = "7.1.1", features = ["console"] }
+console = "0.15.8"
+dialoguer = { version = "0.11.0", features = ["completion", "history"] }
 diesel = { version = "2.2.1", features = ["serde_json", "sqlite", "uuid", "returning_clauses_for_sqlite_3_35"] }
 dotenvy = "0.15.7"
+indicatif = "0.17.8"
 libpt.workspace = true
 serde = { workspace = true, features = ["serde_derive"] }
 serde_json.workspace = true

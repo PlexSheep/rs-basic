@@ -1,5 +1,6 @@
 pub mod models;
 pub mod schema;
+pub mod cli;
 
 use self::schema::posts::dsl::*;
 
@@ -7,6 +8,7 @@ use std::io::Write;
 use std::{env, io};
 
 use colored::Colorize;
+use dialoguer::Input;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
@@ -34,45 +36,3 @@ pub fn load_relevant_posts(conn: &mut SqliteConnection) -> anyhow::Result<Vec<mo
         .load(conn)?)
 }
 
-// NOTE: formatting breaks when you use japanese fullwidth (or probably other longer chars too)
-// characters. Works well for the regular alphabet
-pub fn print_posts(posts_to_print: &Vec<models::Post>) {
-    if !posts_to_print.is_empty() {
-        println!(
-            "{: <12}| {: <30} | {: <40}[...] | {: <12} | {: <5}",
-            "id", "title", "body (truncated)", "body len", "is published?"
-        );
-        println!("{:=^140}", "");
-        for post in posts_to_print {
-            let mut short_title = post.body.clone();
-            short_title.truncate(30);
-            let mut short_body = post.body.clone();
-            short_body.truncate(40);
-            println!(
-                "{: <12}| {: <30} | {: <40}[...] | {: <12} | {: <5}",
-                post.id,
-                short_title,
-                short_body,
-                post.body.len(),
-                post.published
-            );
-        }
-        info!("total: {}", posts_to_print.len());
-    } else {
-        warn!("Tried to display posts, but there are no posts stored in the database");
-    }
-}
-
-// NOTE: this can't handle unicode stuff like 春 and I don't really care
-pub fn read_buf_interactive(buf: &mut String) -> anyhow::Result<()> {
-    buf.clear();
-    let stdin = io::stdin();
-    let mut stdout = io::stdout();
-
-    print!("{}", "> ".green().bold());
-    stdout.flush()?;
-    stdin.read_line(buf)?;
-    *buf = buf.trim().to_string();
-
-    Ok(())
-}
