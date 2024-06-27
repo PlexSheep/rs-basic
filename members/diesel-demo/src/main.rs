@@ -1,5 +1,5 @@
 use diesel::SqliteConnection;
-use diesel_demo::models::PostDraft;
+use diesel_demo::models::{Post, PostDraft};
 use libpt::log::{self, debug, error, trace};
 
 use diesel_demo as lib;
@@ -33,10 +33,23 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
                 help                -     show this menu\n\
                 exit                -     exit the application\n\
                 list                -     list all posts\n\
+                publish [id]         -     delete the post with the id [id]\n\
+                delete [id]         -     delete the post with the id [id]\n\
                 new                 -     create a new post"
             )
         } else if buf.starts_with("EXIT") {
             break;
+        } else if buf.starts_with("PUBLISH") {
+            let id: i32 = match get_id(&buf) {
+                Some(i) => i,
+                None => continue,
+            };
+            Post::publish(conn, id)?;
+        } else if buf.starts_with("DELETE") {
+            let id: i32 = match get_id(&buf) {
+                Some(i) => i,
+                None => continue,
+            };
         } else if buf.starts_with("LIST") {
             let posts = lib::load_all_posts(conn)?;
             trace!("loaded posts for display: {posts:#?}");
@@ -47,9 +60,29 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
                 error!("Could not submit the post: {e:?}");
             });
         } else {
-            println!("Bad input: try 'help'");
+            usage()
         }
     }
 
     Ok(())
+}
+
+fn usage() {
+    println!("Bad input: try 'help'");
+}
+
+fn get_id(buf: &str) -> Option<i32> {
+    match buf.split(' ').nth(1) {
+        Some(s) => match s.parse() {
+            Ok(i) => Some(i),
+            Err(e) => {
+                error!("could not parse the id: {e:?}");
+                None
+            }
+        },
+        None => {
+            usage();
+            None
+        }
+    }
 }

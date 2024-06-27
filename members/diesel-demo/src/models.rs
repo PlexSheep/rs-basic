@@ -1,7 +1,7 @@
 use std::io::{self, Read, Write};
 
 use diesel::prelude::*;
-use libpt::log::trace;
+use libpt::log::{info, trace};
 
 use crate::schema::posts;
 
@@ -19,6 +19,19 @@ pub struct Post {
     pub title: String,
     pub body: String,
     pub published: bool,
+}
+
+impl Post {
+    pub fn publish(conn: &mut SqliteConnection, id: i32) -> anyhow::Result<()> {
+        use crate::schema::posts::dsl::{posts, published};
+
+        let post = diesel::update(posts.find(id))
+            .set(published.eq(true))
+            .returning(Post::as_returning())
+            .get_result(conn)?;
+        info!("updated post {}", post.id);
+        Ok(())
+    }
 }
 
 #[derive(Insertable, Debug)]
