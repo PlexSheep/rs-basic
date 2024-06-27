@@ -33,7 +33,7 @@ impl Post {
         Ok(())
     }
     pub fn delete(conn: &mut SqliteConnection, id: i32) -> anyhow::Result<()> {
-        use crate::schema::posts::dsl::{posts, published};
+        use crate::schema::posts::dsl::posts;
 
         let post = diesel::delete(posts.find(id))
             .returning(Post::as_returning())

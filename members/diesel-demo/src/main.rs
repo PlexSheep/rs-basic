@@ -44,7 +44,7 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
                 Some(i) => i,
                 None => continue,
             };
-            if let Err(e) = Post::publish(conn, id){
+            if let Err(e) = Post::publish(conn, id) {
                 if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
                     if matches!(e, diesel::result::Error::NotFound) {
                         warn!("No post with id {id} exists");
@@ -56,7 +56,7 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
                 Some(i) => i,
                 None => continue,
             };
-            if let Err(e) = Post::delete(conn, id){
+            if let Err(e) = Post::delete(conn, id) {
                 if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
                     if matches!(e, diesel::result::Error::NotFound) {
                         warn!("No post with id {id} exists");
