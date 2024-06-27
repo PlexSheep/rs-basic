@@ -41,7 +41,7 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
     loop {
         lib::read_buf_interactive(&mut buf)?;
         buf = buf.to_uppercase();
-        if buf.starts_with("HELP") || buf.starts_with("?") {
+        if buf.starts_with("HELP") || buf.starts_with('?') {
             println!("{}", HELP_TEXT.bright_blue())
         } else if buf.starts_with("EXIT") || buf.is_empty() {
             break;
