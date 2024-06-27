@@ -29,7 +29,7 @@ Completeness is not a goal of this project.
 * [onlytoken](./members/onlytoken/) (for `rand` and `argon2`)
 
 **Advanced Dependencies**
-* [diesel-demo](./members/diesel-demo/) (for `diesel`)
+* [diesel-demo](./members/diesel-demo/) (for `diesel` and CLI dependencies)
 * [tokio-send-sync](./members/tokio-send-sync/) (for `tokio`)
 * [tokryon](./members/tokryon/) (for `tokio` and `rayon`)
 * [cucumber-demo](./members/cucumber-demo/) (for `cucumber`)

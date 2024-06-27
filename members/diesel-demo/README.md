@@ -17,3 +17,8 @@ just for this.
 ## Ressources
 
 * [Official Guide](https://diesel.rs/guides/getting-started)
+
+## Notes on the CLI
+
+I initially made a bare bones REPL with just regular prints. Eventually,
+this turned into a demo for CLI libraries too.
