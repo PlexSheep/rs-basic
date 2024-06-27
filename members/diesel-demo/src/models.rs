@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::io::{self, Read, Write};
 
 use diesel::prelude::*;
@@ -22,14 +23,20 @@ pub struct Post {
 }
 
 impl Post {
-    pub fn publish(conn: &mut SqliteConnection, id: i32) -> anyhow::Result<()> {
+    pub fn get(conn: &mut SqliteConnection, id: i32) -> anyhow::Result<Post> {
+        use crate::schema::posts::dsl::posts;
+
+        Ok(posts.find(id).select(Post::as_select()).first(conn)?)
+    }
+
+    pub fn publish(conn: &mut SqliteConnection, id: i32, publish: bool) -> anyhow::Result<()> {
         use crate::schema::posts::dsl::{posts, published};
 
         let post = diesel::update(posts.find(id))
-            .set(published.eq(true))
+            .set(published.eq(publish))
             .returning(Post::as_returning())
             .get_result(conn)?;
-        info!("updated post {}", post.id);
+        info!("updated post {}: publish = {}", post.id, post.published);
         Ok(())
     }
     pub fn delete(conn: &mut SqliteConnection, id: i32) -> anyhow::Result<()> {
@@ -40,6 +47,12 @@ impl Post {
             .get_result(conn)?;
         info!("deleted post {}", post.id);
         Ok(())
+    }
+}
+
+impl Display for Post {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "\n{:<60} | published: {:<5}\n{:=^140}\n\n{}", self.title, self.published, "", self.body)
     }
 }
 

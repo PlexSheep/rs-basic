@@ -2,11 +2,24 @@ use diesel::SqliteConnection;
 use diesel_demo::models::{Post, PostDraft};
 use libpt::log::{self, debug, error, trace, warn};
 
+const HELP_TEXT: &str = "\
+                help                -     show this menu\n\
+                exit                -     exit the application\n\
+                list                -     list all posts\n\
+                publish [id]        -     publish the post with the id [id]\n\
+                unpublish [id]      -     make the post with the id [id] a draft\n\
+                delete [id]         -     delete the post with the id [id]\n\
+                read [id]           -     display the post with the id [id]\n\
+                new                 -     create a new post";
+
+use colored::*;
+
 use diesel_demo as lib;
 
 fn main() -> anyhow::Result<()> {
     let _logger = log::Logger::builder()
-        .max_level(log::Level::DEBUG)
+        .max_level(log::Level::INFO)
+        .display_level(false)
         .show_time(false)
         .build();
     debug!("logger initialized");
@@ -28,38 +41,62 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
         lib::read_buf_interactive(&mut buf)?;
         buf = buf.to_uppercase();
         if buf.starts_with("HELP") {
-            println!(
-                "\
-                help                -     show this menu\n\
-                exit                -     exit the application\n\
-                list                -     list all posts\n\
-                publish [id]         -     delete the post with the id [id]\n\
-                delete [id]         -     delete the post with the id [id]\n\
-                new                 -     create a new post"
-            )
+            println!("{}", HELP_TEXT.bright_blue())
         } else if buf.starts_with("EXIT") {
             break;
+        } else if buf.starts_with("UNPUBLISH") {
+            let id: i32 = match get_id(&buf) {
+                Some(i) => i,
+                None => continue,
+            };
+            if let Err(e) = Post::publish(conn, id, false) {
+                if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
+                    if matches!(e, diesel::result::Error::NotFound) {
+                        warn!("No post with id {id} exists");
+                        continue;
+                    }
+                }
+            };
         } else if buf.starts_with("PUBLISH") {
             let id: i32 = match get_id(&buf) {
                 Some(i) => i,
                 None => continue,
             };
-            if let Err(e) = Post::publish(conn, id){
+            if let Err(e) = Post::publish(conn, id, true) {
+                if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
+                    if matches!(e, diesel::result::Error::NotFound) {
+                        warn!("No post with id {id} exists");
+                        continue;
+                    }
+                }
+            };
+        } else if buf.starts_with("READ") {
+            let id: i32 = match get_id(&buf) {
+                Some(i) => i,
+                None => continue,
+            };
+            let r = Post::get(conn, id);
+            let post: Post = if let Err(e) = r {
                 if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
                     if matches!(e, diesel::result::Error::NotFound) {
                         warn!("No post with id {id} exists");
                     }
                 }
+                continue;
+            } else {
+                r.unwrap()
             };
+            println!("{post}");
         } else if buf.starts_with("DELETE") {
             let id: i32 = match get_id(&buf) {
                 Some(i) => i,
                 None => continue,
             };
-            if let Err(e) = Post::delete(conn, id){
+            if let Err(e) = Post::delete(conn, id) {
                 if let Some(e) = e.downcast_ref::<diesel::result::Error>() {
                     if matches!(e, diesel::result::Error::NotFound) {
                         warn!("No post with id {id} exists");
+                        continue;
                     }
                 }
             };

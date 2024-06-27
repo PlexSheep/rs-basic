@@ -6,6 +6,7 @@ use self::schema::posts::dsl::*;
 use std::io::Write;
 use std::{env, io};
 
+use colored::Colorize;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 
@@ -37,7 +38,6 @@ pub fn load_relevant_posts(conn: &mut SqliteConnection) -> anyhow::Result<Vec<mo
 // characters. Works well for the regular alphabet
 pub fn print_posts(posts_to_print: &Vec<models::Post>) {
     if !posts_to_print.is_empty() {
-        info!("{} posts are in the database", posts_to_print.len());
         println!(
             "{: <12}| {: <30} | {: <40}[...] | {: <12} | {: <5}",
             "id", "title", "body (truncated)", "body len", "is published?"
@@ -57,6 +57,7 @@ pub fn print_posts(posts_to_print: &Vec<models::Post>) {
                 post.published
             );
         }
+        info!("total: {}", posts_to_print.len());
     } else {
         warn!("Tried to display posts, but there are no posts stored in the database");
     }
@@ -68,7 +69,7 @@ pub fn read_buf_interactive(buf: &mut String) -> anyhow::Result<()> {
     let stdin = io::stdin();
     let mut stdout = io::stdout();
 
-    print!("> ");
+    print!("{}", "> ".green().bold());
     stdout.flush()?;
     stdin.read_line(buf)?;
     *buf = buf.trim().to_string();
