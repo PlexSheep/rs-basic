@@ -1,6 +1,6 @@
 use diesel::SqliteConnection;
 use diesel_demo::models::PostDraft;
-use libpt::log::{self, debug, info, trace, warn};
+use libpt::log::{self, debug, error, info, trace, warn};
 
 use diesel_demo as lib;
 
@@ -13,10 +13,6 @@ fn main() -> anyhow::Result<()> {
 
     let mut conn = lib::establish_connection()?;
     debug!("db connection established");
-
-    let posts = lib::load_posts(&mut conn)?;
-
-    lib::print_posts(&posts);
 
     trace!("entering the repl");
     repl(&mut conn)?;
@@ -32,19 +28,24 @@ fn repl(conn: &mut SqliteConnection) -> anyhow::Result<()> {
         lib::read_buf_interactive(&mut buf)?;
         buf = buf.to_uppercase();
         if buf.starts_with("HELP") {
-            println!("\
+            println!(
+                "\
                 help                -     show this menu\n\
                 exit                -     exit the application\n\
-                new                 -     create a new post")
-        }
-        else if buf.starts_with("EXIT") {
+                list                -     list all posts\n\
+                new                 -     create a new post"
+            )
+        } else if buf.starts_with("EXIT") {
             break;
-        }
-        else if buf.starts_with("NEW") {
+        } else if buf.starts_with("LIST") {
+            let posts = lib::load_posts(conn)?;
+            lib::print_posts(&posts);
+        } else if buf.starts_with("NEW") {
             let post = PostDraft::interactive_create()?;
-            post.post(conn)?;
-        }
-        else {
+            let _ = post.post(conn).inspect_err(|e| {
+                error!("Could not submit the post: {e:?}");
+            });
+        } else {
             println!("Bad input: try 'help'");
         }
     }

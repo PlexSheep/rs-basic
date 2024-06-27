@@ -1,6 +1,7 @@
 use std::io::{self, Read, Write};
 
 use diesel::prelude::*;
+use libpt::log::trace;
 
 use crate::schema::posts;
 
@@ -10,10 +11,9 @@ const EOF: &str = "CTRL+D";
 #[cfg(windows)]
 const EOF: &str = "CTRL+Z";
 
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Debug)]
 #[diesel(table_name = crate::schema::posts)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))] // optional but improves generated compiler
-                                                     // errors
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))] // optional but improves generated compiler errors
 pub struct Post {
     pub id: i32,
     pub title: String,
@@ -21,8 +21,9 @@ pub struct Post {
     pub published: bool,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[diesel(table_name = crate::schema::posts)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))] // optional but improves generated compiler errors
 pub struct PostDraft {
     pub title: String,
     pub body: String,
@@ -36,6 +37,7 @@ impl PostDraft {
         }
     }
     pub fn post(self, conn: &mut SqliteConnection) -> anyhow::Result<Post> {
+        trace!("PostDraft to post: {self:#?}");
         Ok(diesel::insert_into(posts::table)
             .values(&self)
             .returning(Post::as_returning())
@@ -52,7 +54,7 @@ impl PostDraft {
         stdin.read_line(&mut title)?;
         title = title.trim().to_string();
 
-        println!("(End with {} when finished) Body:\n", EOF);
+        println!("(End with {} when finished) Body:", EOF);
         stdin.read_to_string(&mut body)?;
         body = body.trim().to_string();
 
