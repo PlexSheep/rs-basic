@@ -52,7 +52,11 @@ impl Post {
 
 impl Display for Post {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "\n{:<60} | published: {:<5}\n{:=^140}\n\n{}", self.title, self.published, "", self.body)
+        writeln!(
+            f,
+            "\n{:<60} | published: {:<5}\n{:=^140}\n\n{}",
+            self.title, self.published, "", self.body
+        )
     }
 }
 
