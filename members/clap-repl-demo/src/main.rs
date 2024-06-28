@@ -1,4 +1,4 @@
-use clap::{arg, command, value_parser, ArgAction, Command};
+use clap::{arg, Command};
 
 fn main() {
     // define a command with clap builder
