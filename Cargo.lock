@@ -305,6 +305,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap-repl-demo"
+version = "0.1.0"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "clap_builder"
 version = "4.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
