@@ -25,10 +25,13 @@ members = [
   "members/diesel-demo",
   "members/ptlog",
   "members/hello-world",
-  "members/statusline", "members/clap-repl-demo",
+  "members/statusline",
+  "members/clap-repl-demo",
+  "members/arithmetics",
 ]
 default-members = [
   ".",
+  "members/arithmetics",
   "members/statusline",
   "members/ptlog",
   "members/diesel-demo",
