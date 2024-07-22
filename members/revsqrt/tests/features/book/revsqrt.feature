@@ -1,14 +1,9 @@
 Feature: inverted square root calculation
 
-  Scenario: Calculate fast inverted sqrt
+  Scenario: fast inverted sqrt is about the same as the regular inverted sqrt
     Given a number
     When we calculate the inverted square root of it using the fast inverted square root algorithm
     Then the result is about the same as if we calculate it normally
-
-  Scenario: Calculate regular inverted sqrt
-    Given a number
-    When we calculate the inverted square root of it normally
-    Then the result can be calculated
 
   Scenario: Can the fast inverted sqrt be calculated?
     Given a number
