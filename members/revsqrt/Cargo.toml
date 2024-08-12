@@ -12,7 +12,7 @@ rand = "0.8.5"
 
 [[bench]]
 name = "rsqrt-bench"
-harness = false 	# disable standard harness
+harness = false      # disable standard harness
 
 [lib]
 name = "revsqrt"
@@ -25,6 +25,10 @@ path = "src/main.rs"
 [[test]]
 name = "revsqrt"
 harness = false  # allows Cucumber to print output instead of libtest
+
+[[test]]
+name = "revsqrt-demo"
+harness = false       # allows Cucumber to print output instead of libtest
 
 [[test]]
 name = "basic-revsqrt"
