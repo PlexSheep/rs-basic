@@ -38,6 +38,11 @@ Completeness is not a goal of this project.
 * [rest](./members/rest/) (for `serde`, `tokio` and `warp`)
 * [rest-queued](./members/rest-queued/) (for `serde`, `tokio` and `warp`)
 
+## Warnings
+
+* Some of the crates, especially those related to GUIs, may not work in WSL 
+environments.
+
 ## Rust unsafe
 
 Unsafe rust offers many possibilities otherwise locked from rust, which might

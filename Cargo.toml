@@ -29,9 +29,11 @@ members = [
   "members/clap-repl-demo",
   "members/arithmetics",
   "members/egui-demo",
+  "members/rfd-demo",
 ]
 default-members = [
   ".",
+  "members/rfd-demo",
   "members/egui-demo",
   "members/arithmetics",
   "members/statusline",
