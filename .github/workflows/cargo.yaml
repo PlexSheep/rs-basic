@@ -22,6 +22,10 @@ jobs:
         run: |
           rustup component add rustfmt
           rustup component add clippy
+      - name: install additional dependencies
+        run: |
+          apt update -y
+          apt install libgtk-3-dev librust-atk-dev -y
       - name: config custom registry
         run: |
           mkdir -p ~/.cargo/
