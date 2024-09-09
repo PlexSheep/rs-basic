@@ -30,9 +30,11 @@ members = [
   "members/arithmetics",
   "members/egui-demo",
   "members/rfd-demo",
+  "members/iter-prod",
 ]
 default-members = [
   ".",
+  "members/iter-prod",
   "members/rfd-demo",
   "members/egui-demo",
   "members/arithmetics",
