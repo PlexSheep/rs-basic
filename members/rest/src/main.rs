@@ -12,5 +12,7 @@ async fn main() {
     debug!("spawning data_processing task: {store:#?}");
     tokio::spawn(data_processing(store.clone()));
     info!("starting webserver");
-    warp::serve(routes(store)).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(get_store(store))
+        .run(([127, 0, 0, 1], 3030))
+        .await;
 }

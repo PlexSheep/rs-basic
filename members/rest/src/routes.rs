@@ -18,7 +18,6 @@ pub fn get_store(store: Store) -> impl Filter<Extract = impl Reply, Error = Reje
     warp::path!("api" / "v1" / "store")
         .and(warp::get())
         .and(with_store(store))
-        // .and(warp::body::content_length_limit(2 << 13))
         .then(|store: Store| async move {
             info!("GET /api/v1/store");
             warp::reply::json(&store.get().await)
