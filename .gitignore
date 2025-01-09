@@ -1,3 +1,4 @@
+Cargo.lock
 /target
 members/c-bindings/lib/CMakeCache.txt
 members/c-bindings/lib/cmake_install.cmake
