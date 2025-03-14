@@ -1,6 +1,5 @@
-use std::{collections::HashMap, io::ErrorKind};
+use std::io::ErrorKind;
 
-use chrono::{DateTime, Timelike, Utc};
 use plotters::prelude::*;
 
 fn main() {
