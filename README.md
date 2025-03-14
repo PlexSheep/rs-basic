@@ -7,12 +7,15 @@ dependencies.
 
 Completeness is not a goal of this project.
 
-## Compiling
+## Working with this large repo
 
-Please prefer the use of the [cargo.sh](./cargo.sh) script.
+Please prefer making use of the scripts.
 
 ```bash
-$ ./cargo.sh CRATE CARGO_COMMANDS...
+$ ./cargo_crate.sh CRATE CARGO_COMMANDS...
+$ ./cargo.sh CARGO_COMMANDS...
+$ ./for_each_crate.sh cat Cargo.toml
+$ ./for_each_crate_cargo.sh tree
 ```
 
 ## Highlighted demo crates
