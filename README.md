@@ -14,40 +14,40 @@ Please prefer making use of the scripts.
 ```bash
 $ ./cargo_crate.sh CRATE CARGO_COMMANDS...
 $ ./cargo.sh CARGO_COMMANDS...
-$ ./for_each_crate.sh cat Cargo.toml
-$ ./for_each_crate_cargo.sh tree
+$ ./for_each_crate.sh ANY COMMANDS (in the crate)
+$ ./for_each_crate_cargo.sh CARGO_COMMANDS...
 ```
 
 ## Highlighted demo crates
 
 **Basics**
-* [echargs](./members/echargs/)
-* [shortc](./members/shortc/)
-* [hello-world](./members/hello-world/)
-* [revsqrt](./members/revsqrt/)
+* [echargs](./crates/echargs/)
+* [shortc](./crates/shortc/)
+* [hello-world](./crates/hello-world/)
+* [revsqrt](./crates/revsqrt/)
 
 **Intermediate**
-* [mpsc](./members/mpsc/)
-* [mpsc-full](./members/mpsc-full/)
-* [panic-calm](./members/panic-calm/)
-* [socker](./members/socker/)
+* [mpsc](./crates/mpsc/)
+* [mpsc-full](./crates/mpsc-full/)
+* [panic-calm](./crates/panic-calm/)
+* [socker](./crates/socker/)
 
 **Dependencies**
-* [serde-json-demo](./members/serde-json-demo/) (for `serde` and `serde_json`)
-* [claptest](./members/claptest/) (for `clap`)
-* [ptlog](./members/ptlog/) (for `libpt`)
-* [sqlite-demo](./members/sqlite-demo/) (for `rusqlite`)
-* [onlytoken](./members/onlytoken/) (for `rand` and `argon2`)
+* [serde-json-demo](./crates/serde-json-demo/) (for `serde` and `serde_json`)
+* [claptest](./crates/claptest/) (for `clap`)
+* [ptlog](./crates/ptlog/) (for `libpt`)
+* [sqlite-demo](./crates/sqlite-demo/) (for `rusqlite`)
+* [onlytoken](./crates/onlytoken/) (for `rand` and `argon2`)
 
 **Advanced Dependencies**
-* [diesel-demo](./members/diesel-demo/) (for `diesel` and CLI dependencies)
-* [tokio-send-sync](./members/tokio-send-sync/) (for `tokio`)
-* [tokryon](./members/tokryon/) (for `tokio` and `rayon`)
-* [cucumber-demo](./members/cucumber-demo/) (for `cucumber`)
-* [criterion-demo](./members/criterion-demo/) (for `criterion`)
-* [revsqrt](./members/revsqrt/) (the bench and tests, for `criterion` and `cucumber`)
-* [rest](./members/rest/) (for `serde`, `tokio` and `warp`)
-* [rest-queued](./members/rest-queued/) (for `serde`, `tokio` and `warp`)
+* [diesel-demo](./crates/diesel-demo/) (for `diesel` and CLI dependencies)
+* [tokio-send-sync](./crates/tokio-send-sync/) (for `tokio`)
+* [tokryon](./crates/tokryon/) (for `tokio` and `rayon`)
+* [cucumber-demo](./crates/cucumber-demo/) (for `cucumber`)
+* [criterion-demo](./crates/criterion-demo/) (for `criterion`)
+* [revsqrt](./crates/revsqrt/) (the bench and tests, for `criterion` and `cucumber`)
+* [rest](./crates/rest/) (for `serde`, `tokio` and `warp`)
+* [rest-queued](./crates/rest-queued/) (for `serde`, `tokio` and `warp`)
 
 ## Warnings
 
