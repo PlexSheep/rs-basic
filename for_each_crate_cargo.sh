@@ -1,11 +1,12 @@
 #!/bin/bash
-ROOT=$PWD
-DIRS=$(ls ./crates)
+set -e
+ROOT=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+CRATES=$(ls ./crates)
 
-echo $DIRS
+echo "$CRATES"
 
-for dir in $DIRS; do
-	cd crates/$dir;
-	eval "bash $ROOT/cargo.sh $@";
-	cd $ROOT;
+for crate in $CRATES; do
+	THE_CMD="$ROOT/cargo_crate.sh $crate $@";
+	echo "$THE_CMD"
+	eval "$THE_CMD"
 done;

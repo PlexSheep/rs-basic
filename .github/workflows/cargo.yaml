@@ -20,7 +20,7 @@ jobs:
       - name: Install additional system deps
         run: sudo apt-get update && sudo apt-get install libgtk-3-dev -y
       - name: Run tests
-        run: ./cargo.sh test --all-features --workspace --all-targets
+        run: ./for_each_crate_cargo.sh test --all-features --workspace --all-targets
 
   clippy:
     permissions:
@@ -40,13 +40,13 @@ jobs:
       - name: Install additional system deps
         run: sudo apt-get update && sudo apt-get install libgtk-3-dev -y
       - name: Clippy check and fix
-        run: cargo clippy --fix --all-targets --all-features --workspace
+        run: ./for_each_crate_cargo.sh clippy --fix --all-targets --all-features --workspace --allow-dirty
       - name: Check formatting
-        run: cargo fmt --all
+        run: ./for_each_crate_cargo.sh fmt --all
       - name: commit back to repository
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # These defaults somehow do not work for me, so I've set them 
+          # These defaults somehow do not work for me, so I've set them
           # explicitly
           # The big number is the userid of the bot
           commit_user_name: github-actions[bot]

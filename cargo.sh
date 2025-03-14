@@ -1,6 +1,6 @@
 #!/bin/bash
+set -e
 
-ROOT=$PWD
-CARGO_TARGET_DIR=$PWD/target 
+ROOT=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-cargo --config "target-dir=\"$ROOT/target\"" $@
+CARGO_TARGET_DIR=$ROOT/target cargo $@
