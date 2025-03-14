@@ -56,7 +56,7 @@ environments.
 If you need to compile the whole workspace:
 
 ```bash
-apt install libgtk-3-dev librust-atk-dev -y
+apt install libgtk-3-dev  -y
 ```
 
 ## Rust unsafe
