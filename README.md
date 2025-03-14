@@ -7,6 +7,14 @@ dependencies.
 
 Completeness is not a goal of this project.
 
+## Compiling
+
+Please prefer the use of the [cargo.sh](./cargo.sh) script.
+
+```bash
+$ ./cargo.sh CRATE CARGO_COMMANDS...
+```
+
 ## Highlighted demo crates
 
 **Basics**
@@ -40,8 +48,16 @@ Completeness is not a goal of this project.
 
 ## Warnings
 
-* Some of the crates, especially those related to GUIs, may not work in WSL 
+* Some of the crates, especially those related to GUIs, may not work in WSL
 environments.
+
+## Additional dependencies
+
+If you need to compile the whole workspace:
+
+```bash
+apt install libgtk-3-dev librust-atk-dev -y
+```
 
 ## Rust unsafe
 
